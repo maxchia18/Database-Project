@@ -6,7 +6,7 @@
 //     $fname = $_POST['fname'];
 //     $lname = $_POST['lname'];
 //     $weight = $_POST['weight'];
-//     $bloodtype = $_POST['bloodtype'];
+//     $bloodgroup = $_POST['bloodgroup'];
 //     $icno = $_POST['icno'];
 //     $age = $_POST['age'];
 //     $email = $_POST['email'];
@@ -32,8 +32,8 @@
 
 //     if ($count == 0) {
 //         $password = password_hash($password, PASSWORD_DEFAULT);
-//         $sql = "INSERT INTO Donor(DonorID, FirstName, LastName, Weight, BloodType, Email, Password,IsWhole,IsAphresis)
-//     VALUES('$icno','$fname','$lname','$weight','$bloodtype','$email','$password','$isWhole','$isAphresis')";
+//         $sql = "INSERT INTO Donor(DonorID, FirstName, LastName, Weight, bloodgroup, Email, Password,IsWhole,IsAphresis)
+//     VALUES('$icno','$fname','$lname','$weight','$bloodgroup','$email','$password','$isWhole','$isAphresis')";
 
 //         if ($conn->query($sql) == TRUE) {
 //             echo "success";

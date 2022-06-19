@@ -67,16 +67,7 @@ include "dbConnection.php";
         <nav class="navbar navbar-expand-lg navbar-light">
             <div class="container-fluid">
                 <a class="navbar-brand h1" href="index.php"><img src="img/logo.png" width="50" height="50">Blood Donation</a>
-                <div class="dropdown">
-                    <button class="btn" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i id="menu" class="fa-solid fa-bars"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
-                        <li><a class="dropdown-item" href="profile.php"><i id="profile" class="fa fa-user"></i>Profile</a></li>
-                        <li><a class="dropdown-item" href="history.php"><i id="history" class="fa fa-history"></i>History</a></li>
-                    </ul>
-                </div>
-
+                <a href="login.php">Sign in</a>
             </div>
         </nav>
     </header>

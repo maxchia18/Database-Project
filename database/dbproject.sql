@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.1.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 09, 2022 at 01:43 PM
--- Server version: 10.4.21-MariaDB
--- PHP Version: 8.0.12
+-- Generation Time: Jun 19, 2022 at 09:26 AM
+-- Server version: 10.4.24-MariaDB
+-- PHP Version: 8.1.6
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -60,26 +60,15 @@ INSERT INTO `donationcentre` (`CentreID`, `CentreName`, `CentreAddress`, `StartT
 --
 
 CREATE TABLE `donor` (
-  `DonorID` varchar(12) NOT NULL,
-  `FirstName` varchar(50) NOT NULL,
-  `LastName` varchar(50) NOT NULL,
+  `UserID` int(10) NOT NULL,
   `Weight` double NOT NULL,
-  `BloodType` varchar(5) NOT NULL,
-  `Email` varchar(50) NOT NULL,
-  `Password` varchar(50) NOT NULL,
+  `BloodGroup` varchar(5) NOT NULL,
   `HealthStatus` tinyint(1) NOT NULL DEFAULT 1,
   `IsWhole` tinyint(1) NOT NULL,
   `IsAphresis` tinyint(1) NOT NULL,
-  `UserType` varchar(5) NOT NULL DEFAULT 'user',
-  `LastDonationDate` date DEFAULT NULL
+  `LastDonationDate` date DEFAULT NULL,
+  `IsMalaysian` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `donor`
---
-
-INSERT INTO `donor` (`DonorID`, `FirstName`, `LastName`, `Weight`, `BloodType`, `Email`, `Password`, `HealthStatus`, `IsWhole`, `IsAphresis`, `UserType`, `LastDonationDate`) VALUES
-('000926060219', 'Max', 'En', 55, 'A+', 'becky@williams.com', '$2y$10$KPQNCo4EtPErJwCdWC1U8unJl097gnRKcIP8BJyt8zB', 1, 1, 1, 'user', NULL);
 
 -- --------------------------------------------------------
 
@@ -88,18 +77,24 @@ INSERT INTO `donor` (`DonorID`, `FirstName`, `LastName`, `Weight`, `BloodType`, 
 --
 
 CREATE TABLE `staff` (
-  `StaffID` int(5) NOT NULL,
-  `StaffEmail` varchar(50) NOT NULL,
-  `StaffPassword` varchar(50) NOT NULL,
+  `UserID` int(5) NOT NULL,
   `Centre` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `staff`
+-- Table structure for table `user`
 --
 
-INSERT INTO `staff` (`StaffID`, `StaffEmail`, `StaffPassword`, `Centre`) VALUES
-(1, 'john@work.com', 'john123', 1);
+CREATE TABLE `user` (
+  `UserID` int(10) NOT NULL,
+  `FirstName` varchar(50) NOT NULL,
+  `LastName` varchar(50) NOT NULL,
+  `Email` varchar(50) NOT NULL,
+  `Password` varchar(50) NOT NULL,
+  `UserType` char(5) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Indexes for dumped tables
@@ -115,34 +110,47 @@ ALTER TABLE `donationcentre`
 -- Indexes for table `donor`
 --
 ALTER TABLE `donor`
-  ADD PRIMARY KEY (`DonorID`);
+  ADD PRIMARY KEY (`UserID`);
 
 --
 -- Indexes for table `staff`
 --
 ALTER TABLE `staff`
-  ADD PRIMARY KEY (`StaffID`),
+  ADD PRIMARY KEY (`UserID`),
   ADD KEY `employ` (`Centre`);
+
+--
+-- Indexes for table `user`
+--
+ALTER TABLE `user`
+  ADD PRIMARY KEY (`UserID`);
 
 --
 -- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT for table `staff`
+-- AUTO_INCREMENT for table `user`
 --
-ALTER TABLE `staff`
-  MODIFY `StaffID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+ALTER TABLE `user`
+  MODIFY `UserID` int(10) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
 --
 
 --
+-- Constraints for table `donor`
+--
+ALTER TABLE `donor`
+  ADD CONSTRAINT `donor-user` FOREIGN KEY (`UserID`) REFERENCES `user` (`UserID`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `staff`
 --
 ALTER TABLE `staff`
-  ADD CONSTRAINT `employ` FOREIGN KEY (`Centre`) REFERENCES `donationcentre` (`CentreID`);
+  ADD CONSTRAINT `employ` FOREIGN KEY (`Centre`) REFERENCES `donationcentre` (`CentreID`),
+  ADD CONSTRAINT `staff-user` FOREIGN KEY (`UserID`) REFERENCES `user` (`UserID`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
