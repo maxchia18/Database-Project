@@ -12,13 +12,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $tac = $_POST['checkTAC'];
     $submit = $_POST['signUp'];
     $usertype = "donor";
-
-    //aphresis or whole blood donation condition
     //default 0 for aphresis for all new donor
     $isWhole = 0;
-    if (($age >= 17 || $age <= 60) && $weight >= 45) {
-        $isWhole = 1;
-    }
+    $isWhole = 1;
+
     //check for existing ID
     $checkQuery = "SELECT Email FROM User WHERE Email = '$email'";
     $result = mysqli_query($conn, $checkQuery);
@@ -69,87 +66,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             margin-left: -7%;
         }
     </style>
-
-    <script type="text/javascript">
-        function checkNationality() {
-            const stay1year = document.getElementById('stay1year');
-            if (document.getElementById('nationality2').checked) {
-                stay1year.style.display = 'block';
-                stay1year.required = true;
-            } else {
-                stay1year.style.display = 'none';
-                stay1year.required = false;
-            }
-        }
-
-        function check1year() {
-            var signup = document.getElementById('signUp');
-            var msg = document.getElementById('msg');
-            if (document.getElementById('no1year').checked) {
-                alert("Sorry, you have to stay in Malaysia for at least 1 year to donate blood.");
-                signup.disabled = true;
-                msg.style.display = 'block';
-                msg.innerHTML = "You have to stay in Malaysia for at least 1 year.";
-            } else {
-                signup.disabled = false;
-                msg.style.display = 'none';
-            }
-        }
-
-
-        function checkAge() {
-            var age = document.getElementById('age');
-            var signup = document.getElementById('signUp');
-            var msg = document.getElementById('msg');
-
-            if (age.value > 60 || age.value < 17) {
-                signup.disabled = true;
-                msg.style.display = 'block';
-                msg.innerHTML = "We appreciate your kindness, but you must be within 17 to 60 years old to donate blood.";
-            } else {
-                signup.disabled = false;
-                msg.style.display = 'none';
-            }
-        }
-
-        function checkWeight(){
-            var weight = document.getElementById('weight');
-            var signup = document.getElementById('signUp');
-            var msg = document.getElementById('msg');
-
-            if (weight.value < 45) {
-                signup.disabled = true;
-                msg.style.display = 'block';
-                msg.innerHTML = "We appreciate your kindness, but your body weight must be of at least 45kg.";
-            } else {
-                signup.disabled = false;
-                msg.style.display = 'none';
-            }
-        }
-
-        function toggle() {
-            var x = document.getElementById("password");
-            var toggle = document.getElementById("toggleEye");
-            if (x.type === "password") {
-                x.type = "text";
-                toggle.className = "fa fa-eye-slash";
-            } else {
-                x.type = "password";
-                toggle.className = "fa fa-eye";
-            }
-        }
-
-        jQuery.noConflict();
-        jQuery(document).ready(function($) {
-            $('.name').keyup(function(event) {
-                var textBox = event.target;
-                var start = textBox.selectionStart;
-                var end = textBox.selectionEnd;
-                textBox.value = textBox.value.charAt(0).toUpperCase() + textBox.value.slice(1).toLowerCase();
-                textBox.setSelectionRange(start, end);
-            });
-        });
-    </script>
 </head>
 
 <body>
@@ -257,6 +173,85 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+    </script>
+        <script type="text/javascript">
+        function checkNationality() {
+            const stay1year = document.getElementById('stay1year');
+            if (document.getElementById('nationality2').checked) {
+                stay1year.style.display = 'block';
+                stay1year.required = true;
+            } else {
+                stay1year.style.display = 'none';
+                stay1year.required = false;
+            }
+        }
+
+        function check1year() {
+            var signup = document.getElementById('signUp');
+            var msg = document.getElementById('msg');
+            if (document.getElementById('no1year').checked) {
+                signup.disabled = true;
+                msg.style.display = 'block';
+                msg.innerHTML = "We appreciate your kindness, but you have to stay in Malaysia for at least 1 year.";
+            } else {
+                signup.disabled = false;
+                msg.style.display = 'none';
+            }
+        }
+
+
+        function checkAge() {
+            var age = document.getElementById('age');
+            var signup = document.getElementById('signUp');
+            var msg = document.getElementById('msg');
+
+            if (age.value > 60 || age.value < 17) {
+                signup.disabled = true;
+                msg.style.display = 'block';
+                msg.innerHTML = "We appreciate your kindness, but you must be within 17 to 60 years old to donate blood.";
+            } else {
+                signup.disabled = false;
+                msg.style.display = 'none';
+            }
+        }
+
+        function checkWeight(){
+            var weight = document.getElementById('weight');
+            var signup = document.getElementById('signUp');
+            var msg = document.getElementById('msg');
+
+            if (weight.value < 45) {
+                signup.disabled = true;
+                msg.style.display = 'block';
+                msg.innerHTML = "We appreciate your kindness, but your body weight must be of at least 45kg.";
+            } else {
+                signup.disabled = false;
+                msg.style.display = 'none';
+            }
+        }
+
+        function toggle() {
+            var x = document.getElementById("password");
+            var toggle = document.getElementById("toggleEye");
+            if (x.type === "password") {
+                x.type = "text";
+                toggle.className = "fa fa-eye-slash";
+            } else {
+                x.type = "password";
+                toggle.className = "fa fa-eye";
+            }
+        }
+
+        jQuery.noConflict();
+        jQuery(document).ready(function($) {
+            $('.name').keyup(function(event) {
+                var textBox = event.target;
+                var start = textBox.selectionStart;
+                var end = textBox.selectionEnd;
+                textBox.value = textBox.value.charAt(0).toUpperCase() + textBox.value.slice(1).toLowerCase();
+                textBox.setSelectionRange(start, end);
+            });
+        });
     </script>
 </body>
 
