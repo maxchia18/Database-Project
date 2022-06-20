@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 19, 2022 at 09:26 AM
+-- Generation Time: Jun 20, 2022 at 04:02 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -63,12 +63,19 @@ CREATE TABLE `donor` (
   `UserID` int(10) NOT NULL,
   `Weight` double NOT NULL,
   `BloodGroup` varchar(5) NOT NULL,
+  `Age` int(3) NOT NULL,
   `HealthStatus` tinyint(1) NOT NULL DEFAULT 1,
-  `IsWhole` tinyint(1) NOT NULL,
-  `IsAphresis` tinyint(1) NOT NULL,
-  `LastDonationDate` date DEFAULT NULL,
-  `IsMalaysian` tinyint(1) NOT NULL
+  `IsWhole` tinyint(1) NOT NULL DEFAULT 1,
+  `IsAphresis` tinyint(1) NOT NULL DEFAULT 0,
+  `LastDonationDate` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `donor`
+--
+
+INSERT INTO `donor` (`UserID`, `Weight`, `BloodGroup`, `Age`, `HealthStatus`, `IsWhole`, `IsAphresis`, `LastDonationDate`) VALUES
+(2, 55, 'A+', 21, 1, 1, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -81,6 +88,13 @@ CREATE TABLE `staff` (
   `Centre` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `staff`
+--
+
+INSERT INTO `staff` (`UserID`, `Centre`) VALUES
+(1, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -92,9 +106,17 @@ CREATE TABLE `user` (
   `FirstName` varchar(50) NOT NULL,
   `LastName` varchar(50) NOT NULL,
   `Email` varchar(50) NOT NULL,
-  `Password` varchar(50) NOT NULL,
+  `Password` varchar(255) NOT NULL,
   `UserType` char(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `user`
+--
+
+INSERT INTO `user` (`UserID`, `FirstName`, `LastName`, `Email`, `Password`, `UserType`) VALUES
+(1, 'Max', 'Chia', '75590@siswa.unimas.my', '$2y$10$by9PuERUFxh5q69MeD0/LOXfGFidmXNQbx8VYszV/XBG6MXXiEpXm', 'staff'),
+(2, 'Kha Hau', 'Chong', 'khahau@gmail.com', '$2y$10$OKWbC7R8PdKhuQ/k4LmKqufajZ70Hg.XCQJ1Iy7T4RzD9HeVqny36', 'donor');
 
 --
 -- Indexes for dumped tables
@@ -133,7 +155,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `UserID` int(10) NOT NULL AUTO_INCREMENT;
+  MODIFY `UserID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables

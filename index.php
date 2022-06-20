@@ -26,7 +26,7 @@ include "header.php";
 </head>
 
 <body>
-
+    <h1 style="text-align:center">Welcome <?php echo $userName?>!<h1>
 </body>
 
 

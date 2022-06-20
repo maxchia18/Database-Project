@@ -5,12 +5,36 @@ date_default_timezone_set("Asia/Kuala_Lumpur");
 
 include "dbConnection.php";
 
-// if ($_SESSION['role'] == 'admin') {
-//     header('Location: dashboard.php');
-//     ob_end_flush();
-//     exit();
-// }
+global $userID;
+global $userName;
+global $userType;
 
+if (isset($_SESSION['UserID'])) {
+    $userID = $_SESSION['UserID'];
+    $userName = $_SESSION['UserName'];
+    $userType = $_SESSION['UserType'];
+
+    if ($userType == 'staff') {
+        header('Location: staff/dashboard.php');
+        ob_end_flush();
+        exit();
+    }
+}
+
+//redirect user away from login and register if logged in
+function redirectHome($userType)
+{
+    if ($userType == 'staff') {
+        header('Location: staff/dashboard.php');
+        ob_end_flush();
+        exit();
+    }
+    if ($userType == "donor") {
+        header('Location: index.php');
+        ob_end_flush();
+        exit();
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -67,7 +91,11 @@ include "dbConnection.php";
         <nav class="navbar navbar-expand-lg navbar-light">
             <div class="container-fluid">
                 <a class="navbar-brand h1" href="index.php"><img src="img/logo.png" width="50" height="50">Blood Donation</a>
-                <a href="login.php">Sign in</a>
+                <?php if (isset($_SESSION['UserID'])) {
+                    echo "<a href='logout.php'>Log Out</a>";
+                } else {
+                    echo "<a href='login.php'>Sign in</a>";
+                } ?>
             </div>
         </nav>
     </header>

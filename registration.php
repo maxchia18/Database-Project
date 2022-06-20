@@ -9,12 +9,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $age = $_POST['age'];
     $email = $_POST['email'];
     $password = $_POST['password'];
-    $tac = $_POST['checkTAC'];
     $submit = $_POST['signUp'];
     $usertype = "donor";
-    //default 0 for aphresis for all new donor
-    $isWhole = 0;
-    $isWhole = 1;
 
     //check for existing ID
     $checkQuery = "SELECT Email FROM User WHERE Email = '$email'";
@@ -25,14 +21,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $password = password_hash($password, PASSWORD_DEFAULT);
         $sql = "INSERT INTO User(FirstName, LastName, Email, Password, UserType)
                 VALUES('$fname','$lname','$email','$password','$usertype')";
-        //"INSERT INTO User(UserID, FirstName, LastName, Weight, BloodGroup, Email, Password,IsWhole)";
-        // VALUES('$icno','$fname','$lname','$weight','$bloodgroup','$email','$password','$isWhole','$usertype')";
-        if ($conn->query($sql) == TRUE) {
+        if (mysqli_query($conn, $sql)) {
+            $userID = mysqli_insert_id($conn);
+            $sql2 = "INSERT INTO Donor(UserID, Weight, BloodGroup, Age)
+                    VALUE('$userID','$weight','$bloodgroup','$age')";
+        }
+        if (mysqli_query($conn, $sql2)) {
 ?>
             <script type="text/JavaScript">
-                if(alert("Registration Successful, Sign in now.")){
-                window.location = "login.php";
-            }
+                alert("Registration Successful, Sign in now.");
+            window.location = "login.php";
         </script>
 <?php
         } else {
@@ -43,6 +41,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo 'alert("Email exists.")';
         echo '</script>';
     }
+}
+
+if (isset($_SESSION['UserID'])) {
+    redirectHome($userType);
 }
 ?>
 
@@ -155,9 +157,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </span>
                     </div>
                 </div>
-                <div class="form-check mb-3 col">
+                <div class="form-check mb-3 mx-3">
                     <input type="checkbox" class="form-check-input" id="checkTAC" name="checkTAC" value="checked" required>
-                    <label class="form-check-label" for="checkTAC">By checking this, you acknowledge all of the information are correct, that you are physically and mentally suitable to donate blood, and agreed to our Terms and Condition</label>
+                    <label class="form-check-label" for="checkTAC">By checking this, you acknowledge all of the information are correct, that you are physically and mentally suitable to donate blood, and agreed to our
+                        <a href="https://www.youtube.com/watch?v=iik25wqIuFo" target="_blank">Terms and Condition</a>.</label>
                 </div>
                 <div class="container">
                     <div class="row">
@@ -174,7 +177,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
     </script>
-        <script type="text/javascript">
+    <script type="text/javascript">
         function checkNationality() {
             const stay1year = document.getElementById('stay1year');
             if (document.getElementById('nationality2').checked) {
@@ -215,7 +218,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
 
-        function checkWeight(){
+        function checkWeight() {
             var weight = document.getElementById('weight');
             var signup = document.getElementById('signUp');
             var msg = document.getElementById('msg');
@@ -248,7 +251,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 var textBox = event.target;
                 var start = textBox.selectionStart;
                 var end = textBox.selectionEnd;
-                textBox.value = textBox.value.charAt(0).toUpperCase() + textBox.value.slice(1).toLowerCase();
+                textBox.value = textBox.value.toLowerCase().replace(/\b[a-z]/g, function(letter) {
+                    return letter.toUpperCase();
+                });
                 textBox.setSelectionRange(start, end);
             });
         });

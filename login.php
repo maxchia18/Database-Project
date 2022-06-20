@@ -1,5 +1,59 @@
 <?php
 include "header.php";
+
+$errMsg = "";
+$errVis = "none";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $emailData = mysqli_real_escape_string($conn, $_POST['email']);
+    $passwordData = mysqli_real_escape_string($conn, $_POST['password']);
+    //get hashed password
+    $sql = "SELECT Password FROM User WHERE Email = '$emailData'";
+    $result = mysqli_query($conn, $sql);
+    $passwordHashed = mysqli_fetch_assoc($result);
+    echo $passwordData;
+    echo $passwordHashed['Password'];
+    if (password_verify($passwordData, $passwordHashed['Password'])) {
+        echo "correct";
+        $passwordHashed = $passwordHashed['Password'];
+        $loginData = "SELECT * FROM User WHERE Email = '$emailData' AND Password = '$passwordHashed'";
+        $result = mysqli_query($conn, $loginData);
+
+        $count = mysqli_num_Rows($result);
+        //If result matched, table row must be 1 row
+        if ($count == 1) {
+            $user = mysqli_fetch_assoc($result);
+            $_SESSION['UserType'] = $user['UserType'];
+            $_SESSION['UserID'] = $user['UserID'];
+            $_SESSION['UserName'] = $user['FirstName'];
+
+            echo $_SESSION['UserName'];
+            echo $_SESSION['UserType'];
+            echo $_SESSION['userID'];
+        } else if ($count == 0) {
+            $errVis = "block";
+            $errMsg = "Email doesn't exist";
+        }
+
+        if (isset($_SESSION['UserID'])) {
+?>
+            <script>
+                alert("Login Successful, directing you to home page.");
+                window.location = "index.php";
+            </script>
+<?php
+        }
+        $errVis = "none";
+        $errMsg = "";
+    } else {
+        $errVis = "block";
+        $errMsg = "Incorrect password, please try again.";
+    }
+}
+
+if (isset($_SESSION['UserID'])) {
+    redirectHome($userType);
+}
 ?>
 
 <!DOCTYPE html>
@@ -16,23 +70,29 @@ include "header.php";
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <!--font-->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
-    
+
     <style>
-        #formContainer{
+        #formContainer {
             width: 30%;
-            margin:10vh auto;
+            margin: 10vh auto;
+        }
+
+        #msg {
+            color: red;
+            display: <?php echo $errVis ?>;
+            margin-top: 4%;
+            margin-left: -70%;
         }
     </style>
 </head>
 
 <body>
     <div id="formContainer" class="rounded container shadow p-3 bg-white">
-        <form class="needs-validation" id="loginForm" action="loginValidation.php" method="POST">
+        <form class="needs-validation" id="loginForm" method="POST">
             <h3>Sign in</h3>
             <div class="form-group my-3">
-                <label class="form-label" for="icno">IC No.</label>
-                <input type="email" class="form-control" id="icno" name="icno" placeholder="Email Address" required />
-                <div class="invalid-feedback"></div>
+                <label class="form-label" for="email">Email</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" required />
             </div>
             <div class="form-group mb-3">
                 <label class="form-label" for="password">Password</label>
@@ -43,8 +103,13 @@ include "header.php";
                     </span>
                 </div>
             </div>
-            <div class="form-group mb-3">
-                <button type="submit" id="signIn" name="signIn" class="btn btn-primary btn-block">Sign in</button>
+            <div class="row">
+                <div class="form-group mb-3 col">
+                    <button type="submit" id="signIn" name="signIn" class="btn btn-primary btn-block">Sign in</button>
+                </div>
+                <div class="col">
+                    <span id="msg"><?php echo $errMsg ?></span>
+                </div>
             </div>
             <div class="form-group mb-3">
                 <a href="registration.php">No Account Yet? Sign up now.</a>
