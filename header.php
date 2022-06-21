@@ -50,6 +50,8 @@ function redirectHome($userType)
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <!--jquery-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!--w3cs-->
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <!--font-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
@@ -60,41 +62,29 @@ function redirectHome($userType)
         }
 
         nav {
-            background-color: lightyellow;
+            background: rgb(255, 255, 235);
         }
 
         .navbar-brand {
-            font-size: 5vh !important;
-        }
-
-        #menu {
-            text-decoration: none !important;
-            font-size: large !important;
-            color: black !important;
-            padding-right: 10px;
-        }
-
-        #menu:hover {
-            color: red !important;
-            transition: 0.2s;
-        }
-
-        #profile,
-        #history {
-            padding-right: 15px;
+            margin:auto;
+            font-size: 3.5vh !important;
+            font-weight:bold;
         }
     </style>
 </head>
 
 <body>
-    <header class="shadow-sm">
+    <header class="shadow-sm mb-3">
         <nav class="navbar navbar-expand-lg navbar-light">
             <div class="container-fluid">
-                <a class="navbar-brand h1" href="index.php"><img src="img/logo.png" width="50" height="50">Blood Donation</a>
+                <a href="index.php"><img src="img/logo.png" width="40" height="40"></a>
+                <a class="navbar-brand" href="index.php">Blood Donation</a>
                 <?php if (isset($_SESSION['UserID'])) {
-                    echo "<a href='logout.php'>Log Out</a>";
+                    $logout = "\"logout.php\"";
+                    echo "<button type='button' class='btn btn-danger' onclick='location.href=$logout;'>Log Out</button>";
                 } else {
-                    echo "<a href='login.php'>Sign in</a>";
+                    $login = "\"login.php\"";
+                    echo "<button type='button' class='btn btn-warning' onclick='location.href=$login;'>Log In</button>";
                 } ?>
             </div>
         </nav>

@@ -23,18 +23,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 VALUES('$fname','$lname','$email','$password','$usertype')";
         if (mysqli_query($conn, $sql)) {
             $userID = mysqli_insert_id($conn);
-            $sql2 = "INSERT INTO Donor(UserID, Weight, BloodGroup, Age)
-                    VALUE('$userID','$weight','$bloodgroup','$age')";
-        }
-        if (mysqli_query($conn, $sql2)) {
-?>
-            <script type="text/JavaScript">
-                alert("Registration Successful, Sign in now.");
-            window.location = "login.php";
-        </script>
-<?php
-        } else {
-            echo "Error: " . $sql . "<br>" . $conn->error;
+            $sql2 = "INSERT INTO Donor(UserID, Weight, Age)
+                    VALUE('$userID','$weight','$age')";
+            $sql3 = "INSERT INTO Blood(BloodGroup, DonorID)
+                    VALUE('$bloodgroup','$userID')";
+            if (mysqli_query($conn, $sql2) && mysqli_query($conn, $sql3)) {?>
+                <script type="text/JavaScript">
+                    alert("Registration Successful, Sign in now.");
+                    window.location = "login.php";
+                </script><?php
+            } else {
+                echo "Error: " . $sql . "<br>" . $conn->error;
+            }
         }
     } else {
         echo '<script type ="text/JavaScript">';
@@ -73,7 +73,7 @@ if (isset($_SESSION['UserID'])) {
 <body>
     <div class="regForm container">
         <form id="regForm" method="POST">
-            <h3 class="mt-3">Register</h3>
+            <h1 class="mt-3 w3-center">Register</h1>
             <div class="row">
                 <div class="col">
                     <div class="form-group my-3">

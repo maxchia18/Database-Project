@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $user = mysqli_fetch_assoc($result);
             $_SESSION['UserType'] = $user['UserType'];
             $_SESSION['UserID'] = $user['UserID'];
-            $_SESSION['UserName'] = $user['FirstName'];
+            $_SESSION['UserName'] = $user['FirstName']." ".$user['LastName'];
 
             echo $_SESSION['UserName'];
             echo $_SESSION['UserType'];
