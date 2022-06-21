@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 20, 2022 at 04:02 PM
+-- Generation Time: Jun 21, 2022 at 04:23 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -20,6 +20,27 @@ SET time_zone = "+00:00";
 --
 -- Database: `dbproject`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `blood`
+--
+
+CREATE TABLE `blood` (
+  `BloodID` int(5) NOT NULL,
+  `BloodGroup` char(2) NOT NULL,
+  `DonorID` int(5) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `blood`
+--
+
+INSERT INTO `blood` (`BloodID`, `BloodGroup`, `DonorID`) VALUES
+(1, 'A+', 2),
+(2, 'A-', 3),
+(3, 'B+', 4);
 
 -- --------------------------------------------------------
 
@@ -62,8 +83,7 @@ INSERT INTO `donationcentre` (`CentreID`, `CentreName`, `CentreAddress`, `StartT
 CREATE TABLE `donor` (
   `UserID` int(10) NOT NULL,
   `Weight` double NOT NULL,
-  `BloodGroup` varchar(5) NOT NULL,
-  `Age` int(3) NOT NULL,
+  `Age` int(2) NOT NULL,
   `HealthStatus` tinyint(1) NOT NULL DEFAULT 1,
   `IsWhole` tinyint(1) NOT NULL DEFAULT 1,
   `IsAphresis` tinyint(1) NOT NULL DEFAULT 0,
@@ -74,8 +94,10 @@ CREATE TABLE `donor` (
 -- Dumping data for table `donor`
 --
 
-INSERT INTO `donor` (`UserID`, `Weight`, `BloodGroup`, `Age`, `HealthStatus`, `IsWhole`, `IsAphresis`, `LastDonationDate`) VALUES
-(2, 55, 'A+', 21, 1, 1, 0, NULL);
+INSERT INTO `donor` (`UserID`, `Weight`, `Age`, `HealthStatus`, `IsWhole`, `IsAphresis`, `LastDonationDate`) VALUES
+(2, 55, 21, 1, 1, 0, NULL),
+(3, 65, 22, 1, 1, 0, NULL),
+(4, 56, 44, 1, 1, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -85,14 +107,14 @@ INSERT INTO `donor` (`UserID`, `Weight`, `BloodGroup`, `Age`, `HealthStatus`, `I
 
 CREATE TABLE `staff` (
   `UserID` int(5) NOT NULL,
-  `Centre` int(11) NOT NULL
+  `CentreID` int(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `staff`
 --
 
-INSERT INTO `staff` (`UserID`, `Centre`) VALUES
+INSERT INTO `staff` (`UserID`, `CentreID`) VALUES
 (1, 1);
 
 -- --------------------------------------------------------
@@ -116,11 +138,20 @@ CREATE TABLE `user` (
 
 INSERT INTO `user` (`UserID`, `FirstName`, `LastName`, `Email`, `Password`, `UserType`) VALUES
 (1, 'Max', 'Chia', '75590@siswa.unimas.my', '$2y$10$by9PuERUFxh5q69MeD0/LOXfGFidmXNQbx8VYszV/XBG6MXXiEpXm', 'staff'),
-(2, 'Kha Hau', 'Chong', 'khahau@gmail.com', '$2y$10$OKWbC7R8PdKhuQ/k4LmKqufajZ70Hg.XCQJ1Iy7T4RzD9HeVqny36', 'donor');
+(2, 'Kha Hau', 'Chong', 'khahau@gmail.com', '$2y$10$OKWbC7R8PdKhuQ/k4LmKqufajZ70Hg.XCQJ1Iy7T4RzD9HeVqny36', 'donor'),
+(3, 'Brady', 'Chung', 'brady@gmail.com', '$2y$10$FbkwmwRndhNJNl7o08s1R.2csMBng7KxONdT5LEFtEgqoukIkFW3q', 'donor'),
+(4, 'Muhammad', 'Syahin', 'syahin@gmail.com', '$2y$10$ghe1OOtkW3p1tYnB9XTEhOCmn3GyIT0bAGxPElOgtYEcuhABlwcJi', 'donor');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `blood`
+--
+ALTER TABLE `blood`
+  ADD PRIMARY KEY (`BloodID`,`DonorID`),
+  ADD UNIQUE KEY `DonorID` (`DonorID`);
 
 --
 -- Indexes for table `donationcentre`
@@ -139,7 +170,7 @@ ALTER TABLE `donor`
 --
 ALTER TABLE `staff`
   ADD PRIMARY KEY (`UserID`),
-  ADD KEY `employ` (`Centre`);
+  ADD KEY `employ` (`CentreID`);
 
 --
 -- Indexes for table `user`
@@ -152,14 +183,26 @@ ALTER TABLE `user`
 --
 
 --
+-- AUTO_INCREMENT for table `blood`
+--
+ALTER TABLE `blood`
+  MODIFY `BloodID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `UserID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `UserID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `blood`
+--
+ALTER TABLE `blood`
+  ADD CONSTRAINT `userID` FOREIGN KEY (`DonorID`) REFERENCES `donor` (`UserID`);
 
 --
 -- Constraints for table `donor`
@@ -171,7 +214,7 @@ ALTER TABLE `donor`
 -- Constraints for table `staff`
 --
 ALTER TABLE `staff`
-  ADD CONSTRAINT `employ` FOREIGN KEY (`Centre`) REFERENCES `donationcentre` (`CentreID`),
+  ADD CONSTRAINT `employ` FOREIGN KEY (`CentreID`) REFERENCES `donationcentre` (`CentreID`),
   ADD CONSTRAINT `staff-user` FOREIGN KEY (`UserID`) REFERENCES `user` (`UserID`) ON DELETE CASCADE;
 COMMIT;
 
