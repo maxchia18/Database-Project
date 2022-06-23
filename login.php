@@ -1,6 +1,8 @@
 <?php
 include "header.php";
 
+error_reporting(0);
+ini_set('display_errors', 0);
 $errMsg = "";
 $errVis = "none";
 
@@ -10,51 +12,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     //get hashed password
     $sql = "SELECT Password FROM User WHERE Email = '$emailData'";
     $result = mysqli_query($conn, $sql);
-    $passwordHashed = mysqli_fetch_assoc($result);
-    echo $passwordData;
-    echo $passwordHashed['Password'];
-    if (password_verify($passwordData, $passwordHashed['Password'])) {
-        echo "correct";
-        $passwordHashed = $passwordHashed['Password'];
-        $loginData = "SELECT * FROM User WHERE Email = '$emailData' AND Password = '$passwordHashed'";
-        $result = mysqli_query($conn, $loginData);
+    $count = mysqli_num_rows($result);
+    if ($count == 1) {
+        $passwordHashed = mysqli_fetch_assoc($result);
+        if (password_verify($passwordData, $passwordHashed['Password'])) {
+            $passwordHashed = $passwordHashed['Password'];
+            $loginData = "SELECT * FROM User WHERE Email = '$emailData' AND Password = '$passwordHashed'";
+            $result = mysqli_query($conn, $loginData);
 
-        $count = mysqli_num_Rows($result);
-        //If result matched, table row must be 1 row
-        if ($count == 1) {
+
             $user = mysqli_fetch_assoc($result);
             $_SESSION['UserType'] = $user['UserType'];
             $_SESSION['UserID'] = $user['UserID'];
-            $_SESSION['UserName'] = $user['FirstName']." ".$user['LastName'];
+            $_SESSION['UserName'] = $user['FirstName'] . " " . $user['LastName'];
 
             echo $_SESSION['UserName'];
             echo $_SESSION['UserType'];
             echo $_SESSION['userID'];
-        } else if ($count == 0) {
-            $errVis = "block";
-            $errMsg = "Email doesn't exist";
-        }
 
-        if (isset($_SESSION['UserID'])) {
-?>
-            <script>
-                alert("Login Successful, directing you to home page.");
-                window.location = "index.php";
-            </script>
-<?php
-        }
-        $errVis = "none";
-        $errMsg = "";
-    } else {
-        $errVis = "block";
-        $errMsg = "Incorrect password, please try again.";
-    }
-}
+            if (isset($_SESSION['UserID'])) { ?>
+                <script>
+                    window.location = "index.php";
+                </script><?php
+                        }
+                        $errVis = "none";
+                        $errMsg = "";
+                    } else {
+                        $errVis = "block";
+                        $errMsg = "Incorrect password, please try again.";
+                    }
+                } else {
+                    $errVis = "block";
+                    $errMsg = "Email does not exist.";
+                }
+            }
 
-if (isset($_SESSION['UserID'])) {
-    redirectHome($userType);
-}
-?>
+            if (isset($_SESSION['UserID'])) {
+                redirectHome($userType);
+            }
+                            ?>
 
 <!DOCTYPE html>
 <html>
@@ -69,21 +65,27 @@ if (isset($_SESSION['UserID'])) {
         #formContainer {
             width: 30%;
             margin: 10vh auto;
+            background: linear-gradient(to bottom right, #FF9601, #F9FF4C);
         }
 
-        #msg {
+        .msg {
             color: red;
             display: <?php echo $errVis ?>;
             margin-top: 4%;
-            margin-left: -70%;
+            margin-left: -65%;
+            font-size: small;
+        }
+
+        #noacc:hover{
+            transition:1s;
         }
     </style>
 </head>
 
 <body>
-    <div id="formContainer" class="rounded container shadow p-3 bg-white">
+    <div id="formContainer" class="rounded container shadow p-3">
         <form class="needs-validation" id="loginForm" method="POST">
-            <h3>Sign in</h3>
+            <h2>Sign in</h2>
             <div class="form-group my-3">
                 <label class="form-label" for="email">Email</label>
                 <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" required />
@@ -102,11 +104,11 @@ if (isset($_SESSION['UserID'])) {
                     <button type="submit" id="signIn" name="signIn" class="btn btn-primary btn-block">Sign in</button>
                 </div>
                 <div class="col">
-                    <span id="msg"><?php echo $errMsg ?></span>
+                    <span class="msg"><?php echo $errMsg ?></span>
                 </div>
             </div>
             <div class="form-group mb-3">
-                <a href="registration.php">No Account Yet? Sign up now.</a>
+                <a href="registration.php" id="noacc">No Account Yet? Sign up now.</a>
             </div>
         </form>
     </div>

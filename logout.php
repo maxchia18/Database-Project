@@ -1,20 +1,18 @@
-<!DOCTYPE html>
+<?php
+session_start();
 
-<html>
+if ($userType == "staff") {
+    session_unset();
+    session_destroy();
+?>
+<script>
+        alert("Successfully logout, click OK to return to homepage.");
+</script>
+<?php
+    header("Location: ../index.php");
+}
 
-<head>
-    <script>
-        if (confirm("Are you sure?")) {
-            <?php
-            session_start();
-            session_unset();
-            session_destroy();
-            ?>
-
-            alert("Successfully logout, click OK to return to homepage.");
-            window.location = "index.php";
-        }
-    </script>
-</head>
-
-</html>
+session_unset();
+session_destroy();
+header("Location: index.php");
+?>

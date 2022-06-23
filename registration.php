@@ -53,6 +53,13 @@ if (isset($_SESSION['UserID'])) {
 
 <head>
     <style>
+        .regForm{
+            height:92vh;
+            width:100vw;
+            overflow-y:auto;
+            overflow-x: hidden;
+        }
+
         label {
             font-weight: bold;
         }
@@ -65,26 +72,26 @@ if (isset($_SESSION['UserID'])) {
             color: red;
             display: none;
             margin-top: 0.5%;
-            margin-left: -7%;
+            margin-left: -5%;
         }
     </style>
 </head>
 
 <body>
-    <div class="regForm container">
+    <div class="regForm w3-padding-large">
         <form id="regForm" method="POST">
-            <h1 class="mt-3 w3-center">Register</h1>
+            <h1 class="mt-3 w3-center">Register Account</h1>
             <div class="row">
                 <div class="col">
                     <div class="form-group my-3">
                         <label class="form-label" for="fname">First Name</label>
-                        <input type="text" class="form-control name" id="fname" name="fname" placeholder="First Name" onkeydown="return /^[a-zA-Z-'. ]*$/i.test(event.key)" maxlength="50" required />
+                        <input type="text" class="form-control name" id="fname" name="fname" placeholder="First Name" onkeydown="return /^[a-zA-Z-'./ ]*$/i.test(event.key)" maxlength="50" required />
                     </div>
                 </div>
                 <div class="col">
                     <div class="form-group my-3">
                         <label class="form-label" for="lname">Last Name</label>
-                        <input type="text" class="form-control name" id="lname" name="lname" placeholder="Last Name" onkeydown="return/^[a-zA-Z-'. ]*$/i.test(event.key)" maxlength="50" required />
+                        <input type="text" class="form-control name" id="lname" name="lname" placeholder="Last Name" onkeydown="return/^[a-zA-Z-'./ ]*$/i.test(event.key)" maxlength="50" required />
                     </div>
                 </div>
             </div>
@@ -131,8 +138,8 @@ if (isset($_SESSION['UserID'])) {
                 </div>
                 <div class="form-group mb-3">
                     <label class="form-label" for="bloodgroup">Blood Group</label>
-                    <select class="form-select" name="bloodgroup">
-                        <option disabled>- Select Your Blood Type -</option>
+                    <select class="form-select" name="bloodgroup" required>
+                        <option value="" disabled selected hidden>- Select Your Blood Type -</option>
                         <option value="A+">A+</option>
                         <option value="A-">A-</option>
                         <option value="B+">B+</option>
@@ -251,10 +258,12 @@ if (isset($_SESSION['UserID'])) {
                 var textBox = event.target;
                 var start = textBox.selectionStart;
                 var end = textBox.selectionEnd;
-                textBox.value = textBox.value.toLowerCase().replace(/\b[a-z]/g, function(letter) {
-                    return letter.toUpperCase();
-                });
+                textBox.value = textBox.value.charAt(0).toUpperCase() + textBox.value.slice(1);
+                // textBox.value = textBox.value.toLowerCase().replace(/\b[a-z]/g, function(letter) {
+                //     return letter.toUpperCase();
+                // });
                 textBox.setSelectionRange(start, end);
+                return textBox.value;
             });
         });
     </script>

@@ -1,5 +1,9 @@
 <?php
 include "header.php";
+
+if (!isset($userID)) {
+    header("Location: login.php");
+}
 ?>
 
 <!DOCTYPE html>
@@ -27,41 +31,41 @@ include "header.php";
         }
 
         #history{
-            background-color: rgb(254, 254, 140);
-            transition:1.5s;
+            background-color: rgb(250, 250, 140);
+            transition: 1s;
         }
 
         #history:hover{
             background-color: gold;
-            transition:1.5s;
+            transition: 1s;
+            cursor:pointer;
         }
     
         #appointment{
-           background-color: rgb(225, 75, 75);
-           transition:1.5s;
+           background-color: rgb(230, 75, 75);
+           transition: 1s;
         }
 
         #appointment:hover{
             background-color: rgb(255,40,40);
-            transition:1.5s;
+            transition: 1s;
+            cursor:pointer;
         }
 
         #profile{
             background-color: rgb(255, 190, 75);
-            transition:1.5s;
+            transition: 1s;
         }
 
         #profile:hover{
             background-color: orange;
-            transition:1.5s;
+            transition: 1s;
+            cursor:pointer;
         }
     </style>
 </head>
 
 <body>
-    <?php if (!isset($userID)) {
-        header("Location: login.php");
-    } ?>
     <h1>Welcome <?php echo $userName ?>!</h1>
     <h3>What would you like to do today?<h3>
     <div class="w3-row-padding w3-margin-bottom">

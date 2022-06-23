@@ -1,6 +1,26 @@
+<?php
+include "staffHeader.php";
+
+?>
+
 <!DOCTYPE html>
 
 <html>
-    <h1>dashboard</h1>
-    <a href="../logout.php">Log Out</a>
+
+<head>
+    <style>
+
+    </style>
+
+    <script>
+        
+    </script>
+</head>
+
+<body>
+    <div class="main">
+
+    </div>
+</body>
+
 </html>

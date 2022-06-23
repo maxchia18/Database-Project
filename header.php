@@ -5,20 +5,10 @@ date_default_timezone_set("Asia/Kuala_Lumpur");
 
 include "dbConnection.php";
 
-global $userID;
-global $userName;
-global $userType;
-
-if (isset($_SESSION['UserID'])) {
-    $userID = $_SESSION['UserID'];
-    $userName = $_SESSION['UserName'];
-    $userType = $_SESSION['UserType'];
-
-    if ($userType == 'staff') {
-        header('Location: staff/dashboard.php');
-        ob_end_flush();
-        exit();
-    }
+if ($userType == 'staff') {
+    header('Location: staff/dashboard.php');
+    ob_end_flush();
+    exit();
 }
 
 //redirect user away from login and register if logged in
@@ -54,31 +44,36 @@ function redirectHome($userType)
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <!--font-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- css -->
+    <link rel="stylesheet" href="style/style.css">
 
     <style>
         html,
         body {
             height: 100%;
+            overflow: hidden;
         }
 
-        nav {
-            background: rgb(255, 255, 235);
+        header {
+            background-color: white !important;
+            z-index: 999;
+            box-shadow: 5px 5px 5px lightgrey;
         }
 
         .navbar-brand {
-            margin:auto;
+            margin-left: 2.5%;
             font-size: 3.5vh !important;
-            font-weight:bold;
+            font-weight: bold;
         }
     </style>
 </head>
 
 <body>
-    <header class="shadow-sm mb-3">
+    <header>
         <nav class="navbar navbar-expand-lg navbar-light">
             <div class="container-fluid">
                 <a href="index.php"><img src="img/logo.png" width="40" height="40"></a>
-                <a class="navbar-brand" href="index.php">Blood Donation</a>
+                <a class="navbar-brand" href="index.php" style="color:#CC333F;">Blood Donation</a>
                 <?php if (isset($_SESSION['UserID'])) {
                     $logout = "\"logout.php\"";
                     echo "<button type='button' class='btn btn-danger' onclick='location.href=$logout;'>Log Out</button>";
