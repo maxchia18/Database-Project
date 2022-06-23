@@ -4,6 +4,7 @@ ob_start();
 date_default_timezone_set("Asia/Kuala_Lumpur");
 
 include "../dbConnection.php";
+include "completeApt.php";
 
 $getStaff = "SELECT User.*, Staff.CentreID FROM User INNER JOIN Staff WHERE User.UserID = Staff.UserID AND Staff.UserID = $userID";
 $result = mysqli_query($conn, $getStaff);
@@ -14,15 +15,16 @@ $getCentre = "SELECT * FROM DonationCentre WHERE CentreID = $centreID";
 $getCentreResult = mysqli_query($conn, $getCentre);
 $centreData = mysqli_fetch_assoc($getCentreResult);
 $centreName = $centreData['CentreName'];
+$staffName = explode(" ",$userName);
 ?>
 
 <!DOCTYPE html>
 <html>
 
 <head>
-    <title>Staff Dashboard</title>
+    <title>Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="img/logo.png">
+    <link rel="icon" href="../img/logo.png">
     <!-- bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -66,8 +68,10 @@ $centreName = $centreData['CentreName'];
     <header>
         <nav class="navbar navbar-expand-lg navbar-light">
             <div class="container-fluid">
-                <h4> Welcome, <?php echo $userName; ?></h4>
-                <a class="navbar-brand" href="index.php" style="color:#CC333F;">Blood Donation Dashboard</a>
+                <h4> Welcome, <?php echo $staffName[0]; ?>
+                <span style="font-size:small"><i class='fas fa-map-marker-alt' style='color:#CC333F;'></i>  <?php echo $centreName ?>
+                </h4>
+                <a class="navbar-brand " href="../index.php" style="color:#CC333F;margin-right:20%;">Blood Donation Dashboard</a>
                 <?php if (isset($_SESSION['UserID'])) {
                     $logout = "\"../logout.php\"";
                     echo "<button type='button' class='btn btn-danger' onclick='location.href=$logout;'>Log Out</button>";
@@ -75,6 +79,7 @@ $centreName = $centreData['CentreName'];
             </div>
         </nav>
     </header>
+
     <ul class="nav nav-tabs nav-justified my-1" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="appointment-tab" data-bs-toggle="tab" data-bs-target="#appointment" type="button" role="tab" aria-controls="appointment" aria-selected="true">Appointment</button>

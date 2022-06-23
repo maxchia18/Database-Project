@@ -105,7 +105,7 @@ if (isset($_SESSION['UserID'])) {
                 <div class="col">
                     <div class="form-group mb-3">
                         <label class="form-label" for="weight">Weight (kg)</label>
-                        <input type="number" min="0" step="0.01" class="form-control" id="weight" name="weight" placeholder="Weight" onkeyup="checkWeight();" required />
+                        <input type="number" min="0" step="0.1" class="form-control" id="weight" name="weight" placeholder="Weight" onkeyup="checkWeight();" required />
                     </div>
                 </div>
             </div>

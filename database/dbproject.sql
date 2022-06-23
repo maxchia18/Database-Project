@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 23, 2022 at 02:16 PM
+-- Generation Time: Jun 23, 2022 at 06:46 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -44,7 +44,7 @@ INSERT INTO `appointment` (`AppointmentID`, `DonorID`, `AppointedDate`, `Appoint
 (1, 4, '2022-07-08', '11:00:00', 0, 1),
 (2, 2, '2022-07-09', '15:00:00', 0, 8),
 (3, 3, '2022-06-30', '09:00:00', 0, 7),
-(4, 5, '2022-06-28', '10:00:00', 0, 1);
+(4, 5, '2022-06-28', '10:00:00', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -67,10 +67,7 @@ INSERT INTO `blood` (`BloodID`, `BloodGroup`, `HaemoglobinLevel`, `DonorID`) VAL
 (1, 'A+', NULL, 2),
 (2, 'A-', NULL, 3),
 (3, 'B+', NULL, 4),
-(4, 'B-', NULL, 5),
-(5, 'A+', NULL, 6),
-(6, 'A-', NULL, 7),
-(7, 'B+', NULL, 8);
+(4, 'B+', 13, 5);
 
 -- --------------------------------------------------------
 
@@ -93,6 +90,28 @@ INSERT INTO `bloodbankcentre` (`CentreID`, `TelFax`) VALUES
 (3, '06-763 2900'),
 (5, '088-257 256'),
 (8, '04-200 2155');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `blooddonation`
+--
+
+CREATE TABLE `blooddonation` (
+  `DonationID` int(5) NOT NULL,
+  `BloodID` int(5) NOT NULL,
+  `AppointmentID` int(5) NOT NULL,
+  `DonationAmount` int(3) NOT NULL,
+  `DonationType` char(1) NOT NULL,
+  `StaffID` int(5) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `blooddonation`
+--
+
+INSERT INTO `blooddonation` (`DonationID`, `BloodID`, `AppointmentID`, `DonationAmount`, `DonationType`, `StaffID`) VALUES
+(1, 4, 4, 450, 'w', 1);
 
 -- --------------------------------------------------------
 
@@ -148,7 +167,7 @@ INSERT INTO `donor` (`UserID`, `Weight`, `Age`, `HealthStatus`, `IsWhole`, `IsAp
 (2, 55, 21, 1, 1, 0, NULL),
 (3, 65, 22, 1, 1, 0, NULL),
 (4, 56, 44, 1, 1, 0, NULL),
-(5, 58.9, 19, 1, 1, 0, NULL);
+(5, 56, 19, 1, 1, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -250,6 +269,15 @@ ALTER TABLE `bloodbankcentre`
   ADD PRIMARY KEY (`CentreID`);
 
 --
+-- Indexes for table `blooddonation`
+--
+ALTER TABLE `blooddonation`
+  ADD PRIMARY KEY (`DonationID`,`BloodID`),
+  ADD KEY `blood-donation` (`BloodID`),
+  ADD KEY `appointment-donation` (`AppointmentID`),
+  ADD KEY `staff-donation` (`StaffID`);
+
+--
 -- Indexes for table `donationcentre`
 --
 ALTER TABLE `donationcentre`
@@ -297,6 +325,12 @@ ALTER TABLE `blood`
   MODIFY `BloodID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
+-- AUTO_INCREMENT for table `blooddonation`
+--
+ALTER TABLE `blooddonation`
+  MODIFY `DonationID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
@@ -324,6 +358,14 @@ ALTER TABLE `blood`
 --
 ALTER TABLE `bloodbankcentre`
   ADD CONSTRAINT `bloodbank-centre` FOREIGN KEY (`CentreID`) REFERENCES `donationcentre` (`CentreID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `blooddonation`
+--
+ALTER TABLE `blooddonation`
+  ADD CONSTRAINT `appointment-donation` FOREIGN KEY (`AppointmentID`) REFERENCES `appointment` (`AppointmentID`),
+  ADD CONSTRAINT `blood-donation` FOREIGN KEY (`BloodID`) REFERENCES `blood` (`BloodID`),
+  ADD CONSTRAINT `staff-donation` FOREIGN KEY (`StaffID`) REFERENCES `staff` (`UserID`);
 
 --
 -- Constraints for table `donor`
