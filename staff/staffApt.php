@@ -142,15 +142,19 @@ $getAptResult = mysqli_query($conn, $getAppointment);
     <script>
         function checkWeight(weight) {
             let amount = document.getElementById('amount');
+            let completeBtn = document.getElementById('complete');
             let removeBtn = document.getElementById('remove');
             if (weight >= 45 && weight <= 50) {
                 amount.value = "350";
+                completeBtn.disabled = false;
                 removeBtn.style.display = "none";
             } else if (weight > 50) {
                 amount.value = "450";
+                completeBtn.disabled = false;
                 removeBtn.style.display = "none";
             } else if (weight < 45) {
                 amount.value = "INELIGIBLE";
+                completeBtn.disabled = true;
                 removeBtn.style.display = "block";
             }
         }

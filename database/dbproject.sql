@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 23, 2022 at 06:46 PM
+-- Generation Time: Jun 24, 2022 at 05:13 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -116,6 +116,25 @@ INSERT INTO `blooddonation` (`DonationID`, `BloodID`, `AppointmentID`, `Donation
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `bloodstock`
+--
+
+CREATE TABLE `bloodstock` (
+  `StockID` int(5) NOT NULL,
+  `DonationID` int(5) NOT NULL,
+  `CentreID` int(5) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `bloodstock`
+--
+
+INSERT INTO `bloodstock` (`StockID`, `DonationID`, `CentreID`) VALUES
+(1, 1, 1);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `donationcentre`
 --
 
@@ -142,6 +161,24 @@ INSERT INTO `donationcentre` (`CentreID`, `CentreName`, `CentreAddress`, `TelNo`
 (8, 'Hospital Pulau Pinang', 'Unit Transfusi Perubatan,Jalan Residensi,10450 Pulau Pinang.', '07-1513411', 'B'),
 (9, 'Kluang Great Eastern Branch Office', 'No.22 & 24, Jalan Md Lazim Saim,86000 Kluang, Johor. ', '07-3514141', 'M'),
 (10, 'Uniciti Alam Residential College, UniMAP', 'Jalan Wang Ulu Arau, Sg. Chuchuh, 01000 Kangar, Perlis.', '07-3565088', 'M');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `donationhistory`
+--
+
+CREATE TABLE `donationhistory` (
+  `DonorID` int(5) NOT NULL,
+  `DonationID` int(5) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `donationhistory`
+--
+
+INSERT INTO `donationhistory` (`DonorID`, `DonationID`) VALUES
+(5, 1);
 
 -- --------------------------------------------------------
 
@@ -252,8 +289,8 @@ INSERT INTO `user` (`UserID`, `FirstName`, `LastName`, `Email`, `Password`, `Use
 --
 ALTER TABLE `appointment`
   ADD PRIMARY KEY (`AppointmentID`,`DonorID`),
-  ADD KEY `donor-appointment` (`DonorID`),
-  ADD KEY `centre-appoitnemnt` (`CentreID`);
+  ADD KEY `centre-appoitnemnt` (`CentreID`),
+  ADD KEY `donor-appointment` (`DonorID`);
 
 --
 -- Indexes for table `blood`
@@ -273,15 +310,30 @@ ALTER TABLE `bloodbankcentre`
 --
 ALTER TABLE `blooddonation`
   ADD PRIMARY KEY (`DonationID`,`BloodID`),
-  ADD KEY `blood-donation` (`BloodID`),
   ADD KEY `appointment-donation` (`AppointmentID`),
+  ADD KEY `blood-donation` (`BloodID`),
   ADD KEY `staff-donation` (`StaffID`);
+
+--
+-- Indexes for table `bloodstock`
+--
+ALTER TABLE `bloodstock`
+  ADD PRIMARY KEY (`StockID`,`DonationID`,`CentreID`),
+  ADD KEY `centre-stock` (`CentreID`),
+  ADD KEY `donation-stock` (`DonationID`);
 
 --
 -- Indexes for table `donationcentre`
 --
 ALTER TABLE `donationcentre`
   ADD PRIMARY KEY (`CentreID`);
+
+--
+-- Indexes for table `donationhistory`
+--
+ALTER TABLE `donationhistory`
+  ADD PRIMARY KEY (`DonorID`,`DonationID`),
+  ADD KEY `donation-history` (`DonationID`);
 
 --
 -- Indexes for table `donor`
@@ -331,6 +383,12 @@ ALTER TABLE `blooddonation`
   MODIFY `DonationID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `bloodstock`
+--
+ALTER TABLE `bloodstock`
+  MODIFY `StockID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
@@ -344,14 +402,14 @@ ALTER TABLE `user`
 -- Constraints for table `appointment`
 --
 ALTER TABLE `appointment`
-  ADD CONSTRAINT `centre-appoitnemnt` FOREIGN KEY (`CentreID`) REFERENCES `donationcentre` (`CentreID`),
-  ADD CONSTRAINT `donor-appointment` FOREIGN KEY (`DonorID`) REFERENCES `donor` (`UserID`);
+  ADD CONSTRAINT `centre-appoitnemnt` FOREIGN KEY (`CentreID`) REFERENCES `donationcentre` (`CentreID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `donor-appointment` FOREIGN KEY (`DonorID`) REFERENCES `donor` (`UserID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `blood`
 --
 ALTER TABLE `blood`
-  ADD CONSTRAINT `userID` FOREIGN KEY (`DonorID`) REFERENCES `donor` (`UserID`);
+  ADD CONSTRAINT `userID` FOREIGN KEY (`DonorID`) REFERENCES `donor` (`UserID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `bloodbankcentre`
@@ -363,9 +421,23 @@ ALTER TABLE `bloodbankcentre`
 -- Constraints for table `blooddonation`
 --
 ALTER TABLE `blooddonation`
-  ADD CONSTRAINT `appointment-donation` FOREIGN KEY (`AppointmentID`) REFERENCES `appointment` (`AppointmentID`),
-  ADD CONSTRAINT `blood-donation` FOREIGN KEY (`BloodID`) REFERENCES `blood` (`BloodID`),
-  ADD CONSTRAINT `staff-donation` FOREIGN KEY (`StaffID`) REFERENCES `staff` (`UserID`);
+  ADD CONSTRAINT `appointment-donation` FOREIGN KEY (`AppointmentID`) REFERENCES `appointment` (`AppointmentID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `blood-donation` FOREIGN KEY (`BloodID`) REFERENCES `blood` (`BloodID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `staff-donation` FOREIGN KEY (`StaffID`) REFERENCES `staff` (`UserID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `bloodstock`
+--
+ALTER TABLE `bloodstock`
+  ADD CONSTRAINT `centre-stock` FOREIGN KEY (`CentreID`) REFERENCES `donationcentre` (`CentreID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `donation-stock` FOREIGN KEY (`DonationID`) REFERENCES `blooddonation` (`DonationID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `donationhistory`
+--
+ALTER TABLE `donationhistory`
+  ADD CONSTRAINT `donation-history` FOREIGN KEY (`DonationID`) REFERENCES `blooddonation` (`DonationID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `donor-history` FOREIGN KEY (`DonorID`) REFERENCES `donor` (`UserID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `donor`
@@ -383,8 +455,8 @@ ALTER TABLE `mobilecentre`
 -- Constraints for table `staff`
 --
 ALTER TABLE `staff`
-  ADD CONSTRAINT `employ` FOREIGN KEY (`CentreID`) REFERENCES `donationcentre` (`CentreID`),
-  ADD CONSTRAINT `staff-user` FOREIGN KEY (`UserID`) REFERENCES `user` (`UserID`) ON DELETE CASCADE;
+  ADD CONSTRAINT `employ` FOREIGN KEY (`CentreID`) REFERENCES `donationcentre` (`CentreID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `staff-user` FOREIGN KEY (`UserID`) REFERENCES `user` (`UserID`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

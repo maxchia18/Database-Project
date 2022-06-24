@@ -75,7 +75,7 @@ $count = mysqli_num_rows($result);
         </div>
         <div class='bg' id='bg1'>
             <a id="link2" class='alink' href="#">Check Appointment
-                <i class="fa fa-check-circle" style="margin-left:15%;"></i></a>
+                <i class="fa fa-check-circle" style="margin-left:14.3%;"></i></a>
             </a>
         </div>
         <div class='bg' id='bg2'>
@@ -98,7 +98,7 @@ $count = mysqli_num_rows($result);
                     $statusColor = "gold";
                 } else {
                     $status = "Completed";
-                    $statusColor = "lightgreen";
+                    $statusColor = "rgb(50, 190, 50)";
                 }
                 ?><style>.apt{background-color: <?php echo $statusColor?>;}</style><?php
                 $getName = "SELECT CentreName FROM DonationCentre WHERE CentreID = $apt[CentreID]";

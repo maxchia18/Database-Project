@@ -126,7 +126,7 @@ if ($row == 0 || ($row==1 && $isCompleted['IsCompleted']==0)) {
         </div>
         <div class='bg' id="bg1">
             <a id="link2" class='alink' href="appointment.php">Check Appointment
-                <i class="fa fa-check-circle" style="margin-left:15%;"></i></a>
+                <i class="fa fa-check-circle" style="margin-left:14.3%;"></i></a>
             </a>
         </div>
         <div class='bg' id="bg2">

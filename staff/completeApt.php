@@ -31,15 +31,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $updateBloodResult = mysqli_query($conn, $updateBlood);
 
         //insert donation
-        $insertSQL = "INSERT INTO BloodDonation(BloodID, AppointmentID, DonationAmount, DonationType, StaffID)
+        $insertDonation = "INSERT INTO BloodDonation(BloodID, AppointmentID, DonationAmount, DonationType, StaffID)
                       VALUES('$bloodID','$aptID','$amount','$donationType','$userID')";
-        if ($result = mysqli_query($conn, $insertSQL)) {
-            echo "<script>
+        $donationID = mysqli_insert_id($conn);
+
+        $insertHistory = "INSERT INTO DonationHistory(DonorID, DonationID) VALUES('$donorID','$donationID')";
+        $insertStock = "INSERT INTO BloodStock(DonationID, CentreID) VALUES('$donationID','$centreID')";
+        if (mysqli_query($conn, $insertDonation)) {
+            if (mysqli_query($conn, $insertHistory) && mysqli_query($conn, $insertStock)) {
+                echo "<script>
                 alert('Appointment #'+$aptID+' Completed!');
                 </script>";
-            //refresh
-            echo "<meta http-equiv='refresh' content='0'>";
+                //refresh
+                echo "<meta http-equiv='refresh' content='0'>";
+            }
+        } else{
+            echo mysqli_error($conn);
         }
-
     }
 }
