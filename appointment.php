@@ -84,13 +84,15 @@ $count = mysqli_num_rows($result);
     </div>
     <div class="main w3-padding-large">
         <h1 class="mb-4">Appointment</h1>
-        <div class='apt container rounded w3-round-large my-3'>
         <?php
         if ($count == 0) {
-            echo"<h2 class='pt-0 w3-center' id='noRecord'>Seems like you haven't made any appointment yet!</br>
+            echo"
+            <div class='apt container rounded w3-round-large my-3' style='background-color:gold;'>
+            <h2 class='pt-0 w3-center' id='noRecord'>Seems like you haven't made any appointment yet!</br>
                     <a href='appointmentNew.php'>Make now</a>?
                 </h2>";
         } else {
+            $i=0;
             while ($apt = mysqli_fetch_assoc($result)) {
                 $status = $apt['AppointmentStatus'];
 
@@ -107,11 +109,11 @@ $count = mysqli_num_rows($result);
                     $statusUpdate = "Rejected";
                     $statusColor = "rgb(255, 90, 90)";
                 }
-                ?><style>.apt{background-color: <?php echo $statusColor?>;}</style><?php
                 $getName = "SELECT CentreName FROM DonationCentre WHERE CentreID = $apt[CentreID]";
                 $nameResult = mysqli_query($conn, $getName);
                 $nameRow = mysqli_fetch_assoc($nameResult);
                 echo "
+                <div id='apt$i' class='apt container rounded w3-round-large my-3' style='background-color:$statusColor;'>
                 <h4 class='mb-3'>AppointmentID #$apt[AppointmentID]</h4>        
                 <p class='my-2'><i class='fas fa-bell' style='margin-right:2%;'></i>$statusUpdate</p>
                 <p class='my-2'><i class='fas fa-map-marker-alt' style='margin-right:2%;'></i>$nameRow[CentreName]</i></p>
@@ -121,6 +123,7 @@ $count = mysqli_num_rows($result);
                         </div>
                     </div>
                 </div>";
+                $i++;
             }
         } ?>
         <!-- <div class='w3-quarter'>

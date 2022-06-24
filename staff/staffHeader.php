@@ -14,9 +14,9 @@ $getCentre = "SELECT * FROM DonationCentre WHERE CentreID = $centreID";
 $getCentreResult = mysqli_query($conn, $getCentre);
 $centreData = mysqli_fetch_assoc($getCentreResult);
 $centreName = $centreData['CentreName'];
-$staffName = explode(" ",$userName);
+$staffName = explode(" ", $userName);
 
-if($userType == "donor"){
+if ($userType == "donor") {
     header("Location: ../index.php");
 }
 ?>
@@ -64,6 +64,36 @@ if($userType == "donor"){
             font-size: 3.5vh !important;
             font-weight: bold;
         }
+
+        .count {
+            margin-left: 5%;
+            padding: 0.5% 1%;
+            font-size: x-small;
+            border-radius: 50%;
+            color: black;
+            background-color: lightseagreen;
+        }
+
+        .index {
+            font-size: medium;
+            font-weight:600;
+            margin-left: 2%;
+            color: red;
+        }
+
+        .actionBtn {
+            width: 50%;
+            background-color: rgb(15, 165, 15);
+            color: #fff;
+            font-weight: bold;
+            transition: 0.5s;
+        }
+
+        .actionBtn:hover {
+            background-color: green;
+            color: yellow;
+            transition: 0.5s;
+        }
     </style>
 </head>
 
@@ -72,7 +102,7 @@ if($userType == "donor"){
         <nav class="navbar navbar-expand-lg navbar-light">
             <div class="container-fluid">
                 <h4> Welcome, <?php echo $staffName[0]; ?>
-                <span style="font-size:small"><i class='fas fa-map-marker-alt' style='color:#CC333F;'></i>  <?php echo $centreName ?>
+                    <span style="font-size:small"><i class='fas fa-map-marker-alt' style='color:#CC333F;'></i> <?php echo $centreName ?>
                 </h4>
                 <a class="navbar-brand " href="../index.php" style="color:#CC333F;margin-right:20%;">Blood Donation Dashboard</a>
                 <?php if (isset($_SESSION['UserID'])) {
@@ -83,9 +113,16 @@ if($userType == "donor"){
         </nav>
     </header>
 
+    <?php
+    $getAppointment = "SELECT * FROM Appointment WHERE CentreID = $centreID AND AppointmentStatus = 'ongoing' ORDER BY AppointedDate,AppointedSession";
+    $getAptResult = mysqli_query($conn, $getAppointment);
+    $aptCount = mysqli_num_rows($getAptResult);
+    ?>
     <ul class="nav nav-tabs nav-justified my-1" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="appointment-tab" data-bs-toggle="tab" data-bs-target="#appointment" type="button" role="tab" aria-controls="appointment" aria-selected="true">Appointment</button>
+            <button class="nav-link active" id="appointment-tab" data-bs-toggle="tab" data-bs-target="#appointment" type="button" role="tab" aria-controls="appointment" aria-selected="true">
+                Appointment<span class="count"><?php echo $aptCount; ?></span>
+            </button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="donationRecord-tab" data-bs-toggle="tab" data-bs-target="#donationRecord" type="button" role="tab" aria-controls="donationRecord" aria-selected="false">Donation Record</button>
@@ -98,8 +135,12 @@ if($userType == "donor"){
         <div class="tab-pane fade show active w3-padding" id="appointment" role="tabpanel" aria-labelledby="appointment-tab">
             <?php include "staffApt.php"; ?>
         </div>
-        <div class="tab-pane fade w3-padding" id="donationRecord" role="tabpanel" aria-labelledby="donationRecord-tab">Donation Record</div>
-        <div class="tab-pane fade w3-padding" id="bloodStock" role="tabpanel" aria-labelledby="bloodStock-tab">...</div>
+        <div class="tab-pane fade w3-padding" id="donationRecord" role="tabpanel" aria-labelledby="donationRecord-tab">
+            <?php include "donationRecord.php"; ?>
+        </div>
+        <div class="tab-pane fade w3-padding" id="bloodStock" role="tabpanel" aria-labelledby="bloodStock-tab">
+            <?php include "bloodStock.php"; ?> 
+        </div>
     </div>
 </body>
 
