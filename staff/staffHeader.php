@@ -4,7 +4,6 @@ ob_start();
 date_default_timezone_set("Asia/Kuala_Lumpur");
 
 include "../dbConnection.php";
-include "completeApt.php";
 
 $getStaff = "SELECT User.*, Staff.CentreID FROM User INNER JOIN Staff WHERE User.UserID = Staff.UserID AND Staff.UserID = $userID";
 $result = mysqli_query($conn, $getStaff);
@@ -16,6 +15,10 @@ $getCentreResult = mysqli_query($conn, $getCentre);
 $centreData = mysqli_fetch_assoc($getCentreResult);
 $centreName = $centreData['CentreName'];
 $staffName = explode(" ",$userName);
+
+if($userType == "donor"){
+    header("Location: ../index.php");
+}
 ?>
 
 <!DOCTYPE html>

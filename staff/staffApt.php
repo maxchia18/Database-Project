@@ -1,8 +1,8 @@
 <?php
+include "completeApt.php";
 
-$getAppointment = "SELECT * FROM Appointment WHERE CentreID = $centreID AND IsCompleted = 0 ORDER BY AppointedDate,AppointedSession";
+$getAppointment = "SELECT * FROM Appointment WHERE CentreID = $centreID AND AppointmentStatus = 'ongoing' ORDER BY AppointedDate,AppointedSession";
 $getAptResult = mysqli_query($conn, $getAppointment);
-
 ?>
 
 <!DOCTYPE html>
@@ -42,6 +42,7 @@ $getAptResult = mysqli_query($conn, $getAppointment);
                     <th style="display:none;">iswhole</th>
                     <th style="display:none;">isaphresis</th>
                     <th scope="col">Name</th>
+                    <th scope="col">Gender</th>
                     <th scope="col">Date</th>
                     <th scope="col">Session</th>
                     <th scope="col">Centre</th>
@@ -49,8 +50,9 @@ $getAptResult = mysqli_query($conn, $getAppointment);
                 </tr>
             </thead>
             <tbody>
-                <?php while ($apt = mysqli_fetch_assoc($getAptResult)) {
-                    $getDonor = "SELECT User.FirstName,User.LastName,Donor.IsWhole, Donor.IsAphresis 
+                <?php
+                while ($apt = mysqli_fetch_assoc($getAptResult)) {
+                    $getDonor = "SELECT User.*,Donor.* 
                                 FROM User INNER JOIN Donor WHERE User.UserID = $apt[DonorID]";
                     $getDonorResult = mysqli_query($conn, $getDonor);
                     $donorData = mysqli_fetch_assoc($getDonorResult);
@@ -59,7 +61,9 @@ $getAptResult = mysqli_query($conn, $getAppointment);
                     <th scope='row'>$apt[AppointmentID]</th>
                     <th style='display:none;'>$donorData[IsWhole]</th>
                     <th style='display:none;'>$donorData[IsAphresis]</th>
+                    <th style='display:none';>$donorData[Gender]</th>
                     <td>$donorData[FirstName] $donorData[LastName]</td>
+                    <td>$donorData[Gender]</td>
                     <td>$apt[AppointedDate]</td>
                     <td>$apt[AppointedSession]</td>
                     <td>$centreName</td>
@@ -69,6 +73,10 @@ $getAptResult = mysqli_query($conn, $getAppointment);
                 } ?>
             </tbody>
         </table>
+        <?php
+        if (mysqli_num_rows($getAptResult) == 0) {
+            echo "<h2 class='w3-center mt-5'>No new appointment, check back later.</h2>";
+        } ?>
     </div>
 
     <!-- Modal -->
@@ -85,6 +93,7 @@ $getAptResult = mysqli_query($conn, $getAppointment);
                             <label class="form-label" for="aptID">Appointment ID</label>
                             <input type="text" class="form-control" id="aptID" name="aptID" readonly>
                         </div>
+                        <input type="hidden" id="gender">
                         <div class="row">
                             <div class="col">
                                 <div class="form-group mb-3">
@@ -104,16 +113,16 @@ $getAptResult = mysqli_query($conn, $getAppointment);
                             </div>
                             <div class="col">
                                 <div class="form-group mb-3">
-                                    <label class="form-label" for="haemo">Haemoglobin Level (%)</label>
-                                    <input type="number" min="0" step="0.1" class="form-control" id="haemo" name="haemo" placeholder="Haemoglobin Level" required />
+                                    <label class="form-label" for="haemo">Haemoglobin Level (gm/dL)</label>
+                                    <input type="number" min="0" step="0.1" class="form-control" id="haemo" name="haemo" placeholder="Haemoglobin Level" onkeyup="checkCondition();" required />
                                 </div>
                             </div>
                         </div>
                         <div class="form-group mb-3">
                             <label class="form-label" for="weight">Weight (kg)</label>
-                            <input type="number" min="0" step="0.1" class="form-control" id="weight" name="weight" placeholder="Weight" onkeyup="checkWeight(this.value);" required />
+                            <input type="number" min="0" step="0.1" class="form-control" id="weight" name="weight" placeholder="Weight" onkeyup="checkCondition();" required />
                         </div>
-                        <div class="form-group mb-3">
+                        <div class="form-group mb-3" id="type">
                             <label class="form-label" for="donationType">Donation Type</label></br>
                             <div class="form-check form-check-inline">
                                 <input type="radio" class="form-check-input" id="whole" name="donationType" value="whole" required>
@@ -130,7 +139,7 @@ $getAptResult = mysqli_query($conn, $getAppointment);
                         </div>
                         <div class="modal-footer">
                             <button type="submit" id="complete" name="complete" class="btn btn-primary me-auto">Complete</button>
-                            <button type="button" id="remove" name="remove" class="btn btn-danger" style="display:none;">Remove</button>
+                            <button type="submit" id="remove" name="remove" class="btn btn-danger" style="display:none;">Remove</button>
                         </div>
                     </form>
                 </div>
@@ -140,22 +149,38 @@ $getAptResult = mysqli_query($conn, $getAppointment);
     </div>
 
     <script>
-        function checkWeight(weight) {
-            let amount = document.getElementById('amount');
+        function checkCondition() {
+            let haemo = document.getElementById('haemo').value;
+            let weight = document.getElementById('weight').value;
+            let gender = document.getElementById('gender').value;
             let completeBtn = document.getElementById('complete');
             let removeBtn = document.getElementById('remove');
-            if (weight >= 45 && weight <= 50) {
-                amount.value = "350";
-                completeBtn.disabled = false;
-                removeBtn.style.display = "none";
-            } else if (weight > 50) {
-                amount.value = "450";
-                completeBtn.disabled = false;
-                removeBtn.style.display = "none";
-            } else if (weight < 45) {
+            let amount = document.getElementById('amount');
+            let type = document.getElementById('type');
+            let whole = document.getElementById('whole');
+
+            if (gender == "Male" && (haemo < 13.2 || haemo > 16.6) || weight < 45) {
                 amount.value = "INELIGIBLE";
                 completeBtn.disabled = true;
                 removeBtn.style.display = "block";
+                type.style.display = "none";
+                whole.required = false;
+            } else if (gender == "Female" && (haemo < 11.6 || haemo > 15) || weight < 45) {
+                amount.value = "INELIGIBLE";
+                completeBtn.disabled = true;
+                removeBtn.style.display = "block";
+                type.style.display = "none";
+                whole.required = false;
+            } else {
+                if (weight >= 45 && weight <= 50) {
+                    amount.value = "350";
+                } else if (weight > 50) {
+                    amount.value = "450";
+                }
+                completeBtn.disabled = false;
+                removeBtn.style.display = "none";
+                type.style.display = "block";
+                whole.required = true;
             }
         }
 
@@ -167,7 +192,7 @@ $getAptResult = mysqli_query($conn, $getAppointment);
                     return $(this).text();
                 }).get();
 
-                //set the value for appointment ID
+                //set the value 
                 $('#aptID').val(data[0]);
 
                 let whole = document.getElementById('whole');
@@ -178,6 +203,9 @@ $getAptResult = mysqli_query($conn, $getAppointment);
                 if (data[1] == 0) {
                     whole.disabled = true;
                 }
+
+                $('#gender').val(data[3]);
+
 
             });
         });

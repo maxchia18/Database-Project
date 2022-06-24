@@ -73,7 +73,7 @@ function redirectHome($userType)
         <nav class="navbar navbar-expand-lg navbar-light">
             <div class="container-fluid">
                 <a href="index.php"><img src="img/logo.png" width="40" height="40"></a>
-                <a class="navbar-brand" href="index.php" style="color:#CC333F;">Blood Donation</a>
+                <a class="navbar-brand" href="index.php" style="color:#ff7169;">Blood Donation</a>
                 <?php if (isset($_SESSION['UserID'])) {
                     $logout = "\"logout.php\"";
                     echo "<button type='button' class='btn btn-danger' onclick='location.href=$logout;'>Log Out</button>";

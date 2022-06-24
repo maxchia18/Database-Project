@@ -22,10 +22,9 @@ $count = mysqli_num_rows($result);
             position: fixed;
             z-index: 1;
             left: 0;
-            background-color: #111;
             overflow-x: hidden;
             padding-top: 20px;
-            background-color: rgb(255, 40, 40);
+            background-color: 	#ff7169;
         }
 
         .main {
@@ -93,12 +92,20 @@ $count = mysqli_num_rows($result);
                 </h2>";
         } else {
             while ($apt = mysqli_fetch_assoc($result)) {
-                if ($apt['IsCompleted'] == 0) {
-                    $status = "Ongoing";
+                $status = $apt['AppointmentStatus'];
+
+                if ($status == "ongoing") {
+                    $statusUpdate = "Ongoing";
                     $statusColor = "gold";
-                } else {
-                    $status = "Completed";
+                } else if($status == "completed") {
+                    $statusUpdate = "Completed";
                     $statusColor = "rgb(50, 190, 50)";
+                } else if($status == "cancelled") {
+                    $statusUpdate = "Cancelled";
+                    $statusColor = "rgb(255, 90, 90)";
+                } else if($status == "rejected"){
+                    $statusUpdate = "Rejected";
+                    $statusColor = "rgb(255, 90, 90)";
                 }
                 ?><style>.apt{background-color: <?php echo $statusColor?>;}</style><?php
                 $getName = "SELECT CentreName FROM DonationCentre WHERE CentreID = $apt[CentreID]";
@@ -106,7 +113,7 @@ $count = mysqli_num_rows($result);
                 $nameRow = mysqli_fetch_assoc($nameResult);
                 echo "
                 <h4 class='mb-3'>AppointmentID #$apt[AppointmentID]</h4>        
-                <p class='my-2'><i class='fas fa-bell' style='margin-right:2%;'></i>$status</p>
+                <p class='my-2'><i class='fas fa-bell' style='margin-right:2%;'></i>$statusUpdate</p>
                 <p class='my-2'><i class='fas fa-map-marker-alt' style='margin-right:2%;'></i>$nameRow[CentreName]</i></p>
                     <div class='w3-row'>
                         <div class='w3-threequarter'>

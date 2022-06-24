@@ -7,11 +7,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $weight = $_POST['weight'];
     $bloodgroup = $_POST['bloodgroup'];
     $age = $_POST['age'];
+    $gender = $_POST['gender'];
     $email = $_POST['email'];
     $password = $_POST['password'];
     $submit = $_POST['signUp'];
     $usertype = "donor";
-
+echo $gender;
     //check for existing ID
     $checkQuery = "SELECT Email FROM User WHERE Email = '$email'";
     $result = mysqli_query($conn, $checkQuery);
@@ -19,44 +20,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($count == 0) {
         $password = password_hash($password, PASSWORD_DEFAULT);
-        $sql = "INSERT INTO User(FirstName, LastName, Email, Password, UserType)
-                VALUES('$fname','$lname','$email','$password','$usertype')";
+        $sql = "INSERT INTO User(FirstName, LastName, Gender, Email, Password, UserType)
+                VALUES('$fname','$lname','$gender','$email','$password','$usertype')";
         if (mysqli_query($conn, $sql)) {
             $userID = mysqli_insert_id($conn);
             $sql2 = "INSERT INTO Donor(UserID, Weight, Age)
                     VALUE('$userID','$weight','$age')";
             $sql3 = "INSERT INTO Blood(BloodGroup, DonorID)
                     VALUE('$bloodgroup','$userID')";
-            if (mysqli_query($conn, $sql2) && mysqli_query($conn, $sql3)) {?>
+            if (mysqli_query($conn, $sql2) && mysqli_query($conn, $sql3)) { ?>
                 <script type="text/JavaScript">
                     alert("Registration Successful, Sign in now.");
                     window.location = "login.php";
                 </script><?php
-            } else {
-                echo "Error: " . $sql . "<br>" . $conn->error;
+                        } else {
+                            echo "Error: " . $sql . "<br>" . $conn->error;
+                        }
+                    }
+                } else {
+                    echo '<script type ="text/JavaScript">';
+                    echo 'alert("Email exists.")';
+                    echo '</script>';
+                }
             }
-        }
-    } else {
-        echo '<script type ="text/JavaScript">';
-        echo 'alert("Email exists.")';
-        echo '</script>';
-    }
-}
 
-if (isset($_SESSION['UserID'])) {
-    redirectHome($userType);
-}
-?>
+            if (isset($_SESSION['UserID'])) {
+                redirectHome($userType);
+            }
+                            ?>
 
 <!DOCTYPE html>
 <html>
 
 <head>
     <style>
-        .regForm{
-            height:92vh;
-            width:100vw;
-            overflow-y:auto;
+        .regForm {
+            height: 92vh;
+            width: 100vw;
+            overflow-y: auto;
             overflow-x: hidden;
         }
 
@@ -110,6 +111,19 @@ if (isset($_SESSION['UserID'])) {
                 </div>
             </div>
             <div class="row">
+                <div class="col-4">
+                    <div class="form-group mb-3" id="gender">
+                        <label class="form-label">Gender</label></br>
+                        <div class="form-check form-check-inline">
+                            <input type="radio" class="form-check-input" id="male" name="gender" value="Male" required>
+                            Male<label class="form-check-label" for="male"></label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input type="radio" class="form-check-input" id="female" name="gender" value="Female">
+                            Female<label class="form-check-label" for="female"></label>
+                        </div>
+                    </div>
+                </div>
                 <div class="col">
                     <div class="form-group mb-3">
                         <label class="form-label " for="nationality">Are you Malaysian?</label></br>
@@ -123,9 +137,9 @@ if (isset($_SESSION['UserID'])) {
                         </div>
                     </div>
                 </div>
-                <div class="col">
+                <div class="col-5">
                     <div class="form-group mb-3" id="stay1year">
-                        <label class="form-label" for="weight">Have you been staying in Malaysia for at least 1 year?</label></br>
+                        <label class="form-label">Have you stayed in Malaysia for at least 1 year?</label></br>
                         <div class="form-check form-check-inline">
                             <input type="radio" class="form-check-input" id="yes1year" name="stay" value="yes1year" onclick="check1year();">
                             Yes<label class="form-check-label" for="yes1year"></label>
@@ -136,49 +150,50 @@ if (isset($_SESSION['UserID'])) {
                         </div>
                     </div>
                 </div>
-                <div class="form-group mb-3">
-                    <label class="form-label" for="bloodgroup">Blood Group</label>
-                    <select class="form-select" name="bloodgroup" required>
-                        <option value="" disabled selected hidden>- Select Your Blood Type -</option>
-                        <option value="A+">A+</option>
-                        <option value="A-">A-</option>
-                        <option value="B+">B+</option>
-                        <option value="B-">B-</option>
-                        <option value="AB+">AB+</option>
-                        <option value="AB-">AB-</option>
-                        <option value="O+">O+</option>
-                        <option value="O-">O-</option>
-                    </select>
-                </div>
-                <div class="form-group mb-3">
-                    <label class="form-label" for="email">Email</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" maxlength="50" required />
+            </div>
+            <div class="form-group mb-3">
+                <label class="form-label" for="bloodgroup">Blood Group</label>
+                <select class="form-select" name="bloodgroup" required>
+                    <option value="" disabled selected hidden>- Select Your Blood Type -</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                </select>
+            </div>
+            <div class="form-group mb-3">
+                <label class="form-label" for="email">Email</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" maxlength="50" required />
 
+            </div>
+            <div class="form-group mb-3">
+                <label class="form-label" for="password">Password</label>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" maxlength="50" required />
+                    <span class="input-group-text" onclick="toggle()">
+                        <i id="toggleEye" class="fa fa-eye"></i>
+                    </span>
                 </div>
-                <div class="form-group mb-3">
-                    <label class="form-label" for="password">Password</label>
-                    <div class="input-group">
-                        <input type="password" class="form-control" id="password" name="password" placeholder="Password" maxlength="50" required />
-                        <span class="input-group-text" onclick="toggle()">
-                            <i id="toggleEye" class="fa fa-eye"></i>
-                        </span>
+            </div>
+            <div class="form-check mb-3 mx-3">
+                <input type="checkbox" class="form-check-input" id="checkTAC" name="checkTAC" value="checked" required>
+                <label class="form-check-label" for="checkTAC">By checking this, you acknowledge all of the information are correct, that you are physically and mentally suitable to donate blood, and agreed to our
+                    <a href="https://www.youtube.com/watch?v=iik25wqIuFo" target="_blank">Terms and Condition</a>.</label>
+            </div>
+            <div class="form-group mb-3">
+                <div class="row">
+                    <div class="col">
+                        <button type="submit" id="signUp" name="signUp" class="btn btn-primary btn-block" onclick="return  confirm('Are you sure?')">Create Account</button>
+                    </div>
+                    <div class="col-10">
+                        <span id="msg"></span>
                     </div>
                 </div>
-                <div class="form-check mb-3 mx-3">
-                    <input type="checkbox" class="form-check-input" id="checkTAC" name="checkTAC" value="checked" required>
-                    <label class="form-check-label" for="checkTAC">By checking this, you acknowledge all of the information are correct, that you are physically and mentally suitable to donate blood, and agreed to our
-                        <a href="https://www.youtube.com/watch?v=iik25wqIuFo" target="_blank">Terms and Condition</a>.</label>
-                </div>
-                <div class="container">
-                    <div class="row">
-                        <div class="form-group mb-3 col">
-                            <button type="submit" id="signUp" name="signUp" class="btn btn-primary btn-block" onclick="return  confirm('Are you sure?')">Create Account</button>
-                        </div>
-                        <div class="col-10">
-                            <span id="msg"></span>
-                        </div>
-                    </div>
-                </div>
+            </div>
         </form>
     </div>
 

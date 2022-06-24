@@ -42,18 +42,18 @@ if (!isset($userID)) {
         }
     
         #appointment{
-           background-color: rgb(230, 75, 75);
+           background-color: #ffa178;
            transition: 1s;
         }
 
         #appointment:hover{
-            background-color: rgb(255,40,40);
+            background-color: #ff7169;
             transition: 1s;
             cursor:pointer;
         }
 
         #profile{
-            background-color: rgb(255, 190, 75);
+            background-color: #ffca93;
             transition: 1s;
         }
 

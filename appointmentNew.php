@@ -1,6 +1,8 @@
 <?php
 include "header.php";
 
+//choose Date and Session first, then only show available place
+
 $bloodbank = "SELECT * FROM DonationCentre WHERE CentreType = 'B'";
 $mobile = "SELECT DonationCentre.*, MobileCentre.StartDate, MobileCentre.EndDate FROM DonationCentre 
            INNER JOIN MobileCentre ON DonationCentre.CentreID = MobileCentre.CentreID";
@@ -29,14 +31,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 $checkApt = "SELECT * FROM Appointment WHERE DonorID = $userID LIMIT 1";
 $checkResult = mysqli_query($conn, $checkApt);
 $row = mysqli_num_rows($checkResult);
-$isCompleted = mysqli_fetch_assoc($checkResult);
+$AppointmentStatus = mysqli_fetch_assoc($checkResult);
+$status = $AppointmentStatus['AppointmentStatus'];
+$msgVis = "none";
+$message = "";
 
-if ($row == 0 || ($row==1 && $isCompleted['IsCompleted']==0)) {
+if ($row == 1 && $status == "ongoing") {
     $hasApt = "block";
     $noApt = "none";
-} else if($row == 1 && $isCompleted['IsCompleted']==1) {
+} else if ($row == 0) {
     $hasApt = "none";
     $noApt = "block";
+} else if ($row == 1 && $status != "ongoing") {
+    $hasApt = "none";
+    $noApt = "block";
+    $getDonation = "SELECT DonationType FROM BloodDonation WHERE AppointmentID = $AppointmentStatus[AppointmentID]";
+    $getDonationResult = mysqli_query($conn, $getDonation);
+    $getDonation = mysqli_fetch_assoc($getDonationResult);
+
+    $lastDate = $AppointmentStatus['AppointedDate'];
+    $datetime = new DateTime($lastDate);
+
+    if ($status == "completed") {
+        $msgVis = "block";
+        if ($getDonation['DonationType'] == 'w') {
+            $message = "Thank you for your whole blood donation, you are advised to rest for 2 months before next donation.";
+            $datetime->modify('+2 months');
+            $newDate = $datetime->format('Y-m-d');
+        } else if ($getDonation['DonationType'] == 'a') {
+            $message = "Thank you for your aphresis blood donation, you are advised to rest for 2 weeks before next donation.";
+            $datetime->modify('+2 weeks');
+            $newDate = $datetime->format('Y-m-d');
+        }
+    } else if ($status == "rejected") {
+        $msgVis = "block";
+        $message = "Due to your health condition, you are advised to rest for 2 weeks before making new appointment.";
+    }
 }
 ?>
 
@@ -62,7 +92,7 @@ if ($row == 0 || ($row==1 && $isCompleted['IsCompleted']==0)) {
             background-color: #111;
             overflow-x: hidden;
             padding-top: 20px;
-            background-color: rgb(255, 40, 40);
+            background-color: #ff7169;
         }
 
         .main {
@@ -109,12 +139,15 @@ if ($row == 0 || ($row==1 && $isCompleted['IsCompleted']==0)) {
 
             startDate = text[1];
             endDate = text[2];
+            date.disabled = false;
+            date.value = startDate;
             date.min = startDate;
             date.max = endDate;
 
             if (startDate == undefined) {
                 date.min = new Date().toLocaleDateString('en-ca');
             }
+
         }
     </script>
 </head>
@@ -137,10 +170,15 @@ if ($row == 0 || ($row==1 && $isCompleted['IsCompleted']==0)) {
     <div class="main w3-padding-large">
         <form id="aptForm" method="POST">
             <h1 class="mb-4">New Appointment</h1>
-            <div class="container shadow rounded w3-padding" id='form'>
+            <div class="container shadow rounded w3-padding border" id='form'>
                 <h3 class='w3-center' id='hasApt'>We appreciate your kindness, but you have an ongoing
                     <a href='appointment.php'>appointment</a> to attend.
                 </h3>
+                <div style="display:<?php echo $msgVis ?>;">
+                    <h3><?php echo $message ?>
+                        <hr>
+                    </h3>
+                </div>
                 <div class="form-group mb-3">
                     <label class="form-label" for="centre">Donation Centre</label>
                     <select class="form-select w3-padding" name="centre" id="centre" onchange="setMaxDate(this.value);" required>
@@ -166,7 +204,7 @@ if ($row == 0 || ($row==1 && $isCompleted['IsCompleted']==0)) {
                 <div class="row">
                     <div class="form-group mb-3 col">
                         <label class="form-label" for="date">Date</label>
-                        <input type="date" class="form-control" id="date" name="date" required />
+                        <input type="date" class="form-control" id="date" name="date" required disabled/>
                     </div>
                     <div class="form-group mb-3 col">
                         <label class="form-label" for="session">Session</label>

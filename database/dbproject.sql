@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 24, 2022 at 05:13 AM
+-- Generation Time: Jun 24, 2022 at 01:34 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -32,7 +32,7 @@ CREATE TABLE `appointment` (
   `DonorID` int(5) NOT NULL,
   `AppointedDate` date NOT NULL,
   `AppointedSession` time NOT NULL,
-  `IsCompleted` tinyint(1) NOT NULL DEFAULT 0,
+  `AppointmentStatus` char(10) NOT NULL DEFAULT 'ongoing',
   `CentreID` int(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -40,11 +40,14 @@ CREATE TABLE `appointment` (
 -- Dumping data for table `appointment`
 --
 
-INSERT INTO `appointment` (`AppointmentID`, `DonorID`, `AppointedDate`, `AppointedSession`, `IsCompleted`, `CentreID`) VALUES
-(1, 4, '2022-07-08', '11:00:00', 0, 1),
-(2, 2, '2022-07-09', '15:00:00', 0, 8),
-(3, 3, '2022-06-30', '09:00:00', 0, 7),
-(4, 5, '2022-06-28', '10:00:00', 1, 1);
+INSERT INTO `appointment` (`AppointmentID`, `DonorID`, `AppointedDate`, `AppointedSession`, `AppointmentStatus`, `CentreID`) VALUES
+(1, 4, '2022-07-08', '11:00:00', 'completed', 1),
+(2, 2, '2022-07-09', '15:00:00', 'completed', 8),
+(3, 3, '2022-06-30', '09:00:00', 'completed', 7),
+(4, 5, '2022-06-28', '10:00:00', 'completed', 1),
+(5, 10, '2022-07-08', '09:00:00', 'completed', 1),
+(6, 9, '2022-07-08', '11:00:00', 'completed', 1),
+(7, 11, '2022-07-14', '12:00:00', 'rejected', 8);
 
 -- --------------------------------------------------------
 
@@ -64,10 +67,13 @@ CREATE TABLE `blood` (
 --
 
 INSERT INTO `blood` (`BloodID`, `BloodGroup`, `HaemoglobinLevel`, `DonorID`) VALUES
-(1, 'A+', NULL, 2),
-(2, 'A-', NULL, 3),
-(3, 'B+', NULL, 4),
-(4, 'B+', 13, 5);
+(1, 'A+', 12.7, 2),
+(2, 'A-', 15, 3),
+(3, 'B-', 14, 4),
+(4, 'B+', 13, 5),
+(5, 'A+', 13, 9),
+(6, 'A+', 13, 10),
+(7, 'A+', 13, 11);
 
 -- --------------------------------------------------------
 
@@ -111,7 +117,12 @@ CREATE TABLE `blooddonation` (
 --
 
 INSERT INTO `blooddonation` (`DonationID`, `BloodID`, `AppointmentID`, `DonationAmount`, `DonationType`, `StaffID`) VALUES
-(1, 4, 4, 450, 'w', 1);
+(1, 4, 4, 450, 'w', 1),
+(2, 1, 2, 450, 'w', 8),
+(3, 2, 3, 450, 'w', 7),
+(4, 3, 1, 450, 'w', 1),
+(5, 5, 6, 350, 'w', 1),
+(6, 6, 5, 450, 'w', 1);
 
 -- --------------------------------------------------------
 
@@ -130,7 +141,12 @@ CREATE TABLE `bloodstock` (
 --
 
 INSERT INTO `bloodstock` (`StockID`, `DonationID`, `CentreID`) VALUES
-(1, 1, 1);
+(1, 1, 1),
+(2, 2, 8),
+(3, 3, 7),
+(4, 4, 1),
+(6, 5, 1),
+(8, 6, 1);
 
 -- --------------------------------------------------------
 
@@ -178,7 +194,12 @@ CREATE TABLE `donationhistory` (
 --
 
 INSERT INTO `donationhistory` (`DonorID`, `DonationID`) VALUES
-(5, 1);
+(2, 2),
+(3, 3),
+(4, 4),
+(5, 1),
+(9, 5),
+(10, 6);
 
 -- --------------------------------------------------------
 
@@ -190,7 +211,6 @@ CREATE TABLE `donor` (
   `UserID` int(10) NOT NULL,
   `Weight` double NOT NULL,
   `Age` int(2) NOT NULL,
-  `HealthStatus` tinyint(1) NOT NULL DEFAULT 1,
   `IsWhole` tinyint(1) NOT NULL DEFAULT 1,
   `IsAphresis` tinyint(1) NOT NULL DEFAULT 0,
   `LastDonationDate` date DEFAULT NULL
@@ -200,11 +220,14 @@ CREATE TABLE `donor` (
 -- Dumping data for table `donor`
 --
 
-INSERT INTO `donor` (`UserID`, `Weight`, `Age`, `HealthStatus`, `IsWhole`, `IsAphresis`, `LastDonationDate`) VALUES
-(2, 55, 21, 1, 1, 0, NULL),
-(3, 65, 22, 1, 1, 0, NULL),
-(4, 56, 44, 1, 1, 0, NULL),
-(5, 56, 19, 1, 1, 0, NULL);
+INSERT INTO `donor` (`UserID`, `Weight`, `Age`, `IsWhole`, `IsAphresis`, `LastDonationDate`) VALUES
+(2, 55, 21, 1, 0, '2022-07-09'),
+(3, 66, 22, 1, 0, '2022-06-30'),
+(4, 58, 44, 1, 0, '2022-07-08'),
+(5, 56, 19, 1, 0, '2022-06-28'),
+(9, 47, 57, 1, 0, '2022-07-08'),
+(10, 56, 31, 1, 0, '0000-00-00'),
+(11, 56, 49, 1, 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -261,6 +284,7 @@ CREATE TABLE `user` (
   `UserID` int(10) NOT NULL,
   `FirstName` varchar(50) NOT NULL,
   `LastName` varchar(50) NOT NULL,
+  `Gender` char(6) NOT NULL,
   `Email` varchar(50) NOT NULL,
   `Password` varchar(255) NOT NULL,
   `UserType` char(5) NOT NULL
@@ -270,15 +294,18 @@ CREATE TABLE `user` (
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`UserID`, `FirstName`, `LastName`, `Email`, `Password`, `UserType`) VALUES
-(1, 'Max', 'Chia', '75590@siswa.unimas.my', '$2y$10$by9PuERUFxh5q69MeD0/LOXfGFidmXNQbx8VYszV/XBG6MXXiEpXm', 'staff'),
-(2, 'Kha Hau', 'Chong', 'khahau@gmail.com', '$2y$10$OKWbC7R8PdKhuQ/k4LmKqufajZ70Hg.XCQJ1Iy7T4RzD9HeVqny36', 'donor'),
-(3, 'Brady', 'Chung', 'brady@gmail.com', '$2y$10$FbkwmwRndhNJNl7o08s1R.2csMBng7KxONdT5LEFtEgqoukIkFW3q', 'donor'),
-(4, 'Muhammad', 'Syahin', 'syahin@gmail.com', '$2y$10$ghe1OOtkW3p1tYnB9XTEhOCmn3GyIT0bAGxPElOgtYEcuhABlwcJi', 'donor'),
-(5, 'Muthu a/l', 'Suppiah', 'muthu@gmail.com', '$2y$10$JuHjU7uVYBXSi90FIiWaF.0W03UDxfJjOHfBywK3i043MbUIO9RPa', 'donor'),
-(6, 'Jovian ', 'Jayome', '70019@siswa.unimas.my', '$2y$10$iXH9geuz.JaJ8eYAsrzUs.dTkA3PuyUl/aMN2gy7H5EBZRHnDo2Dy', 'staff'),
-(7, 'Nurrul', 'Nazwa', '76391@siswa.unimas.my', '$2y$10$HH5Ch9lBpSIecI/YKZcrzeozCckNW00MfI66PUPTGLzku.UIBznZm', 'staff'),
-(8, 'Jaymax', 'Bravyain', '75132@siswa.unimas.my', '$2y$10$3cJ0xzNAsRYvnjGruvmUfecj20GDshtjL9XKbWEDJNkf3oSptPlp6', 'staff');
+INSERT INTO `user` (`UserID`, `FirstName`, `LastName`, `Gender`, `Email`, `Password`, `UserType`) VALUES
+(1, 'Max', 'Chia', 'Male', '75590@siswa.unimas.my', '$2y$10$by9PuERUFxh5q69MeD0/LOXfGFidmXNQbx8VYszV/XBG6MXXiEpXm', 'staff'),
+(2, 'Kha Hau', 'Chong', 'Male', 'khahau@gmail.com', '$2y$10$OKWbC7R8PdKhuQ/k4LmKqufajZ70Hg.XCQJ1Iy7T4RzD9HeVqny36', 'donor'),
+(3, 'Brady', 'Chung', 'Male', 'brady@gmail.com', '$2y$10$FbkwmwRndhNJNl7o08s1R.2csMBng7KxONdT5LEFtEgqoukIkFW3q', 'donor'),
+(4, 'Muhammad', 'Syahin', 'Male', 'syahin@gmail.com', '$2y$10$ghe1OOtkW3p1tYnB9XTEhOCmn3GyIT0bAGxPElOgtYEcuhABlwcJi', 'donor'),
+(5, 'Muthu a/l', 'Suppiah', 'Male', 'muthu@gmail.com', '$2y$10$JuHjU7uVYBXSi90FIiWaF.0W03UDxfJjOHfBywK3i043MbUIO9RPa', 'donor'),
+(6, 'Jovian ', 'Jayome', 'Male', '70019@siswa.unimas.my', '$2y$10$iXH9geuz.JaJ8eYAsrzUs.dTkA3PuyUl/aMN2gy7H5EBZRHnDo2Dy', 'staff'),
+(7, 'Nurrul', 'Nazwa', 'Female', '76391@siswa.unimas.my', '$2y$10$HH5Ch9lBpSIecI/YKZcrzeozCckNW00MfI66PUPTGLzku.UIBznZm', 'staff'),
+(8, 'Jaymax', 'Bravyain', 'Male', '75132@siswa.unimas.my', '$2y$10$3cJ0xzNAsRYvnjGruvmUfecj20GDshtjL9XKbWEDJNkf3oSptPlp6', 'staff'),
+(9, 'Siti binti', 'Abdullah', 'Female', 'siti@gmail.com', '$2y$10$4Y4XueJfpmqDtzOJUAJxN.yiPwYZFGWrWZlcAcOP1iwbmHAwP1.eO', 'donor'),
+(10, 'Janice', 'Po', 'Female', 'janice@gmail.com', '$2y$10$qR1oGaoegjjz.iTDMM0CCeywz6r9cSv9wvFypr1LFXIAe0jAe0cnm', 'donor'),
+(11, 'Lee ', 'Xin', 'Male', 'lee@gmail.com', '$2y$10$BzoThc6mpaPHYdBdJrrUH.FvnSmDKY.GUDWxYIHRDETIbu46oCxji', 'donor');
 
 --
 -- Indexes for dumped tables
@@ -368,31 +395,31 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `appointment`
 --
 ALTER TABLE `appointment`
-  MODIFY `AppointmentID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `AppointmentID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `blood`
 --
 ALTER TABLE `blood`
-  MODIFY `BloodID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `BloodID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `blooddonation`
 --
 ALTER TABLE `blooddonation`
-  MODIFY `DonationID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `DonationID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `bloodstock`
 --
 ALTER TABLE `bloodstock`
-  MODIFY `StockID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `StockID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `UserID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `UserID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- Constraints for dumped tables
