@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 25, 2022 at 11:26 AM
+-- Generation Time: Jun 25, 2022 at 07:15 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -50,7 +50,8 @@ INSERT INTO `appointment` (`AppointmentID`, `DonorID`, `AppointedDate`, `Appoint
 (7, 11, '2022-07-14', '12:00:00', 'rejected', 8),
 (8, 5, '2022-08-28', '10:00:00', 'completed', 1),
 (9, 5, '2022-08-28', '09:00:00', 'completed', 1),
-(10, 10, '2022-09-08', '09:00:00', 'completed', 8);
+(10, 10, '2022-09-08', '09:00:00', 'completed', 8),
+(11, 9, '2022-09-08', '11:00:00', 'ongoing', 8);
 
 -- --------------------------------------------------------
 
@@ -408,7 +409,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `appointment`
 --
 ALTER TABLE `appointment`
-  MODIFY `AppointmentID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `AppointmentID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `blood`

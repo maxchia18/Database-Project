@@ -71,7 +71,7 @@ if (!isset($userID)) {
     <div class="w3-row-padding w3-margin-bottom">
         <div class="w3-third">
             <div id="history" class="w3-container w3-padding-16 w3-round-xxlarge"
-            onclick="location.href='history.php';">
+            onclick="location.href='donationHistory.php';">
                 <div class="w3-center"><i class="fa fa-history w3-xxxlarge"></i></div>
                 <div class="w3-clear"></div>
                 <h2>History</h2>

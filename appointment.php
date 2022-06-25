@@ -24,7 +24,7 @@ $count = mysqli_num_rows($result);
             left: 0;
             overflow-x: hidden;
             padding-top: 20px;
-            background-color: 	#ff7169;
+            background-color: #ff7169;
         }
 
         .main {
@@ -87,41 +87,49 @@ $count = mysqli_num_rows($result);
         <?php
         if ($count == 0) {
             echo"
-            <div class='apt container rounded w3-round-large my-3' style='background-color:gold;'>
-            <h2 class='pt-0 w3-center' id='noRecord'>Seems like you haven't made any appointment yet!</br>
+            <div class='apt container rounded w3-round-large my-3' style='background-color:#ff7169;'>
+            <h2 class='pt-0 pb-3 w3-center' id='noRecord'>Seems like you haven't made any appointment yet!</br>
                     <a href='appointmentNew.php'>Make now</a>?
                 </h2>";
         } else {
             $i=0;
             while ($apt = mysqli_fetch_assoc($result)) {
                 $status = $apt['AppointmentStatus'];
+                $btnVis = "none";
 
                 if ($status == "ongoing") {
                     $statusUpdate = "Ongoing";
-                    $statusColor = "gold";
+                    $statusColor = "rgb(255, 255, 185);";
+                    $btnVis = "block";
                 } else if($status == "completed") {
                     $statusUpdate = "Completed";
                     $statusColor = "#91f086";
                 } else if($status == "cancelled") {
                     $statusUpdate = "Cancelled";
-                    $statusColor = "rgb(255, 90, 90)";
+                    $statusColor = "lightsalmon";
                 } else if($status == "rejected"){
                     $statusUpdate = "Rejected";
-                    $statusColor = "#ffc4da";
+                    $statusColor = "lightsalmon";
                 }
                 $getName = "SELECT CentreName FROM DonationCentre WHERE CentreID = $apt[CentreID]";
                 $nameResult = mysqli_query($conn, $getName);
                 $nameRow = mysqli_fetch_assoc($nameResult);
                 echo "
                 <div id='apt$i' class='apt container rounded w3-round-large my-3' style='background-color:$statusColor;'>
-                <h4 class='mb-3'>AppointmentID #$apt[AppointmentID]</h4>        
-                <p class='my-2'><i class='fas fa-bell' style='margin-right:2%;'></i>$statusUpdate</p>
-                <p class='my-2'><i class='fas fa-map-marker-alt' style='margin-right:2%;'></i>$nameRow[CentreName]</i></p>
-                    <div class='w3-row'>
-                        <div class='w3-threequarter'>
-                            <p><i class='fa fa-calendar-alt' style='margin-right:2.4%;'></i>$apt[AppointedDate], $apt[AppointedSession]</p>
+                    <div class='row'>
+                        <h4 class='col-11'>AppointmentID #$apt[AppointmentID]</h4> 
+                        <div class='col' id='btn$i' style='display:"?><?php echo $btnVis;?><?php
+                echo "'>
+                            <button type='button' class='cancelBtn col btn btn-danger' title='Cancel Appointment'><i class='fa-solid fa-times'></i></button>
                         </div>
-                    </div>
+                    </div>       
+                    <p class='mb-2'><i class='fas fa-bell' style='margin-right:2%;'></i>$statusUpdate</p>
+                    <p class='my-2'><i class='fas fa-map-marker-alt' style='margin-right:2%;'></i>$nameRow[CentreName]</i></p>
+                        <div class='w3-row'>
+                            <div class='w3-threequarter'>
+                                <p><i class='fa fa-calendar-alt' style='margin-right:2.4%;'></i>$apt[AppointedDate], $apt[AppointedSession]</p>
+                            </div>
+                        </div>
                 </div>";
                 $i++;
             }

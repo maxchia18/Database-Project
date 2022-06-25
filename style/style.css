@@ -1,4 +1,4 @@
-.fa:hover, .fas:hover {
+.fa:hover, .fas:hover, .fa-solid:hover, .fas-solid:hover {
     animation: mymove 2s infinite;
 }
 

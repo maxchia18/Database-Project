@@ -65,6 +65,10 @@ if ($userType == "donor") {
             font-weight: bold;
         }
 
+        .content{
+            padding:0.1% 1%;
+        }
+
         .count {
             margin-left: 5%;
             padding: 0.5% 1%;
@@ -140,10 +144,10 @@ if ($userType == "donor") {
             <?php include "staffApt.php"; ?>
         </div>
         <div class="tab-pane fade w3-padding" id="donationRecord" role="tabpanel" aria-labelledby="donationRecord-tab">
-            <?php include "donationRecord.php"; ?>
+            <?php include "staffDonHistory.php"; ?>
         </div>
         <div class="tab-pane fade w3-padding" id="bloodStock" role="tabpanel" aria-labelledby="bloodStock-tab">
-            <?php include "bloodStock.php"; ?>
+            <?php include "staffBloodStock.php"; ?>
         </div>
     </div>
 
