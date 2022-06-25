@@ -13,7 +13,7 @@ $getDonationResult = mysqli_query($conn, $getDonation);
     <div class="content container border w3-round-large" style="height:80vh;overflow:auto;">
         <h3>Donation Record<span class="index"># ➜ Donation ID</h3>
 
-        <table class="table">
+        <table class="table table-hover">
             <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -40,7 +40,7 @@ $getDonationResult = mysqli_query($conn, $getDonation);
                                                           $donationType = "Aphresis";
                     
                     echo "<tr>
-                    <th scope='row'>$getDonation[DonationID]</th>
+                    <td scope='row'><b>$getDonation[DonationID]</b></td>
                     <td>$donorData[FirstName] $donorData[LastName]</td>
                     <td>$getDonation[AppointedDate]</td>
                     <td>$getDonation[AppointedSession]</td>
@@ -57,7 +57,6 @@ $getDonationResult = mysqli_query($conn, $getDonation);
             echo "<h2 class='w3-center mt-5'>No donation record yet, check back later.</h2>";
         } ?>
     </div>
-
 
     <script>
 

@@ -76,7 +76,7 @@ if ($userType == "donor") {
 
         .index {
             font-size: medium;
-            font-weight:600;
+            font-weight: 600;
             margin-left: 2%;
             color: red;
         }
@@ -93,6 +93,10 @@ if ($userType == "donor") {
             background-color: green;
             color: yellow;
             transition: 0.5s;
+        }
+
+        th {
+            cursor: pointer;
         }
     </style>
 </head>
@@ -139,9 +143,36 @@ if ($userType == "donor") {
             <?php include "donationRecord.php"; ?>
         </div>
         <div class="tab-pane fade w3-padding" id="bloodStock" role="tabpanel" aria-labelledby="bloodStock-tab">
-            <?php include "bloodStock.php"; ?> 
+            <?php include "bloodStock.php"; ?>
         </div>
     </div>
+
+    <!-- sorttable -->
+    <script>
+        $('th').click(function() {
+            var table = $(this).parents('table').eq(0)
+            var rows = table.find('tr:gt(0)').toArray().sort(comparer($(this).index()))
+            this.asc = !this.asc
+            if (!this.asc) {
+                rows = rows.reverse()
+            }
+            for (var i = 0; i < rows.length; i++) {
+                table.append(rows[i])
+            }
+        })
+
+        function comparer(index) {
+            return function(a, b) {
+                var valA = getCellValue(a, index),
+                    valB = getCellValue(b, index)
+                return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
+            }
+        }
+
+        function getCellValue(row, index) {
+            return $(row).children('td').eq(index).text()
+        }
+    </script>
 </body>
 
 </html>

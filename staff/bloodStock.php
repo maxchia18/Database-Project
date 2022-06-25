@@ -1,10 +1,4 @@
 <?php
-// $getDonation = "SELECT BloodDonation.*,Appointment.* FROM Appointment 
-//                 INNER JOIN BloodDonation ON Appointment.AppointmentID = BloodDonation.AppointmentID
-//                 WHERE CentreID = $centreID AND AppointmentStatus = 'completed' ORDER BY AppointedDate,AppointedSession";
-// $getDonationResult = mysqli_query($conn, $getDonation);
-
-$bloodGroup = array("A+","A-","B+","B-","AB+","AB-","O+","O-");
 $getBlood = "SELECT COALESCE(SUM(BloodDonation.DonationAmount),0) as 'sum', Blood.BloodGroup,BloodStock.CentreID FROM BloodDonation
              INNER JOIN Blood ON BloodDonation.BloodID = Blood.BloodID
              INNER JOIN BloodStock ON BloodDonation.DonationID = BloodStock.DonationID
@@ -12,7 +6,9 @@ $getBlood = "SELECT COALESCE(SUM(BloodDonation.DonationAmount),0) as 'sum', Bloo
              GROUP BY Blood.BloodGroup ORDER BY sum DESC";
 $getBloodResult = mysqli_query($conn, $getBlood);
 
-// $leftOver = array_diff($bloodGroup,$getBlood['BloodGroup']);
+$bloodGroup = array("A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-");
+$BloodArray = [];
+
 ?>
 
 <!DOCTYPE html>
@@ -23,7 +19,7 @@ $getBloodResult = mysqli_query($conn, $getBlood);
     <div class="content container border w3-round-large" style="height:80vh;overflow:auto;">
         <h3>Blood Stock<span class="index"><?php echo $centreName ?></h3>
 
-        <table class="table">
+        <table id="stock" class="table table-hover sorttable">
             <thead>
                 <tr>
                     <th scope="col">Blood Group</th>
@@ -34,36 +30,29 @@ $getBloodResult = mysqli_query($conn, $getBlood);
             <tbody>
                 <?php
                 while ($getBlood = mysqli_fetch_array($getBloodResult)) {
+                    $BloodArray[] = $getBlood['BloodGroup'];
                     echo "
-                    <tr>
-                        <th>$getBlood[BloodGroup]</th>
+                    <tr class='table-success'>
+                        <td>$getBlood[BloodGroup]</td>
                         <td>$getBlood[sum]</th>
-                        <td>
-                        <i class='fas fa-check-circle' style='color:green;'></i>
-                        <i class='fa fa-minus-circle' style='color:orange;'></i>
-                        <i class='fa-solid fa-circle-xmark' style='color:red;'></i></th>
+                        <td>Available</td>
                     </tr>";
                 }
-                // foreach($leftOver as $group){
-                //     echo"
-                //     <tr>
-                //         <th>$group</th>
-                //         <td>0</th>
-                //         <td>
-                //         <i class='fas fa-check-circle' style='color:green;'></i>
-                //         <i class='fa fa-minus-circle' style='color:orange;'></i>
-                //         <i class='fa-solid fa-circle-xmark' style='color:red;'></i></th>
-                //     </tr>";
-                // }
+                $leftOver = array_diff($bloodGroup, $BloodArray);
+                foreach ($leftOver as $group) {
+                    echo "
+                    <tr class='table-danger'>
+                        <td>$group</td>
+                        <td>0</th>
+                        <td>Shortage</td>
+                    </tr>";
+                }
                 ?>
             </tbody>
         </table>
     </div>
 
 
-    <script>
-
-    </script>
 </body>
 
 </html>

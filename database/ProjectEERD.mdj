@@ -3157,8 +3157,7 @@
 								"$ref": "AAAAAAGBdRC31riIHto="
 							},
 							"name": "LastDonationDate",
-							"type": "DATE",
-							"nullable": true
+							"type": "DATE"
 						}
 					]
 				},

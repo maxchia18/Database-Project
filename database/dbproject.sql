@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 24, 2022 at 06:11 PM
+-- Generation Time: Jun 25, 2022 at 11:26 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -48,7 +48,9 @@ INSERT INTO `appointment` (`AppointmentID`, `DonorID`, `AppointedDate`, `Appoint
 (5, 10, '2022-07-08', '09:00:00', 'completed', 1),
 (6, 9, '2022-07-08', '11:00:00', 'completed', 1),
 (7, 11, '2022-07-14', '12:00:00', 'rejected', 8),
-(8, 5, '2022-08-28', '10:00:00', 'completed', 1);
+(8, 5, '2022-08-28', '10:00:00', 'completed', 1),
+(9, 5, '2022-08-28', '09:00:00', 'completed', 1),
+(10, 10, '2022-09-08', '09:00:00', 'completed', 8);
 
 -- --------------------------------------------------------
 
@@ -71,9 +73,9 @@ INSERT INTO `blood` (`BloodID`, `BloodGroup`, `HaemoglobinLevel`, `DonorID`) VAL
 (1, 'A+', 12.7, 2),
 (2, 'A-', 15, 3),
 (3, 'B-', 14, 4),
-(4, 'AB+', 15, 5),
+(4, 'A+', 15, 5),
 (5, 'A+', 13, 9),
-(6, 'A+', 13, 10),
+(6, 'A-', 13, 10),
 (7, 'A+', 13, 11),
 (8, 'B-', NULL, 12);
 
@@ -125,7 +127,9 @@ INSERT INTO `blooddonation` (`DonationID`, `BloodID`, `AppointmentID`, `Donation
 (4, 3, 1, 450, 'w', 1),
 (5, 5, 6, 350, 'w', 1),
 (6, 6, 5, 450, 'w', 1),
-(7, 4, 8, 450, 'w', 1);
+(7, 4, 8, 450, 'w', 1),
+(8, 4, 9, 450, 'a', 1),
+(9, 6, 10, 360, 'w', 8);
 
 -- --------------------------------------------------------
 
@@ -149,7 +153,9 @@ INSERT INTO `bloodstock` (`DonationID`, `CentreID`) VALUES
 (4, 1),
 (5, 1),
 (6, 1),
-(7, 1);
+(7, 1),
+(8, 1),
+(9, 8);
 
 -- --------------------------------------------------------
 
@@ -202,8 +208,10 @@ INSERT INTO `donationhistory` (`DonorID`, `DonationID`) VALUES
 (4, 4),
 (5, 1),
 (5, 7),
+(5, 8),
 (9, 5),
-(10, 6);
+(10, 6),
+(10, 9);
 
 -- --------------------------------------------------------
 
@@ -217,7 +225,7 @@ CREATE TABLE `donor` (
   `Age` int(2) NOT NULL,
   `IsWhole` tinyint(1) NOT NULL DEFAULT 1,
   `IsAphresis` tinyint(1) NOT NULL DEFAULT 0,
-  `LastDonationDate` date DEFAULT NULL
+  `LastDonationDate` date DEFAULT '1900-01-01'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -228,11 +236,11 @@ INSERT INTO `donor` (`UserID`, `Weight`, `Age`, `IsWhole`, `IsAphresis`, `LastDo
 (2, 55, 21, 1, 0, '2022-07-09'),
 (3, 66, 22, 1, 0, '2022-06-30'),
 (4, 58, 44, 1, 0, '2022-07-08'),
-(5, 56, 19, 1, 0, '0000-00-00'),
+(5, 56, 19, 1, 1, '1900-01-01'),
 (9, 47, 57, 1, 0, '2022-07-08'),
-(10, 56, 31, 1, 0, '0000-00-00'),
-(11, 56, 49, 1, 0, NULL),
-(12, 45, 22, 1, 0, NULL);
+(10, 56, 31, 1, 1, '2022-09-08'),
+(11, 56, 49, 1, 0, '1900-01-01'),
+(12, 45, 22, 1, 0, '1900-01-01');
 
 -- --------------------------------------------------------
 
@@ -400,7 +408,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `appointment`
 --
 ALTER TABLE `appointment`
-  MODIFY `AppointmentID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `AppointmentID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `blood`
@@ -412,7 +420,7 @@ ALTER TABLE `blood`
 -- AUTO_INCREMENT for table `blooddonation`
 --
 ALTER TABLE `blooddonation`
-  MODIFY `DonationID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `DonationID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `user`

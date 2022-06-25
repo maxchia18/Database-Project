@@ -101,13 +101,13 @@ $count = mysqli_num_rows($result);
                     $statusColor = "gold";
                 } else if($status == "completed") {
                     $statusUpdate = "Completed";
-                    $statusColor = "rgb(50, 190, 50)";
+                    $statusColor = "#91f086";
                 } else if($status == "cancelled") {
                     $statusUpdate = "Cancelled";
                     $statusColor = "rgb(255, 90, 90)";
                 } else if($status == "rejected"){
                     $statusUpdate = "Rejected";
-                    $statusColor = "rgb(255, 90, 90)";
+                    $statusColor = "#ffc4da";
                 }
                 $getName = "SELECT CentreName FROM DonationCentre WHERE CentreID = $apt[CentreID]";
                 $nameResult = mysqli_query($conn, $getName);

@@ -8,7 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $amount = $_POST['amount'];
 
     //get data
-    $getData = "SELECT Appointment.*,Donor.UserID,Blood.BloodID FROM Appointment 
+    $getData = "SELECT Appointment.*,Donor.*,Blood.BloodID FROM Appointment 
                 INNER JOIN Donor ON Appointment.DonorID = Donor.UserID 
                 INNER JOIN Blood ON Appointment.DonorID = Blood.DonorID 
                 WHERE AppointmentID = $aptID";
@@ -16,6 +16,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $getData = mysqli_fetch_assoc($getDataResult);
     $donorID = $getData['DonorID'];
     $bloodID = $getData['BloodID'];
+    $appointedDate = $getData['AppointedDate'];
+    $lastDate = $getData['LastDonationDate'];
+    $datetime = new DateTime($appointedDate);
+    $datetime->modify('-6 months');
+    $_6months = $datetime->format('Y-m-d');
 
     if (isset($_POST['complete'])) {
         //update data
@@ -27,16 +32,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $checkResult = mysqli_query($conn, $checkEligible);
         $checkEligible = mysqli_fetch_assoc($checkResult);
 
-        $lastDate = $getDonor['LastDonationDate'];
-        $datetime = new DateTime($lastDate);
-        $datetime->modify('-6 months');
-        $_6months = $datetime->format('Y-m-d');
-
-        if ($weight > 55 && $checkEligible['total'] > 2 && $lastDate > $_6months && $getDonor['Age'] < 55) {
-            $updateDonor = "UPDATE Donor SET IsAphresis = 1 Weight = '$weight' WHERE UserID = $donorID";
+        if ($weight > 55 && $checkEligible['total'] > 1 && $lastDate < $_6months && $getData['Age'] < 55) {
+            $updateDonor = "UPDATE Donor SET IsAphresis = 1, Weight = '$weight',LastDonationDate = '$appointedDate' WHERE UserID = $donorID";
             $updateDonorResult = mysqli_query($conn, $updateDonor);
         } else {
-            $updateDonor = "UPDATE Donor SET IsAphresis = 0, Weight = '$weight', LastDonationDate = '$getApt[AppointedDate]' WHERE UserID = $donorID";
+            $updateDonor = "UPDATE Donor SET IsAphresis = 0, Weight = '$weight', LastDonationDate = '$appointedDate' WHERE UserID = $donorID";
             $updateDonorResult = mysqli_query($conn, $updateDonor);
         }
 
@@ -81,3 +81,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     //refresh
     echo "<meta http-equiv='refresh' content='0'>";
 }
+?>

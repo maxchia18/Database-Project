@@ -9,7 +9,10 @@ include "completeApt.php";
 
 <head>
     <style>
-
+        #error {
+            display: none;
+            color: red !important;
+        }
     </style>
 
     <script>
@@ -21,7 +24,7 @@ include "completeApt.php";
     <div class="content container border w3-round-large" style="height:80vh;overflow:auto;">
         <h3>New Appointment<span class="index"># ➜ Appointment ID</h3>
 
-        <table class="table">
+        <table class="table table-hover table-striped">
             <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -39,15 +42,14 @@ include "completeApt.php";
                 <?php
                 while ($apt = mysqli_fetch_assoc($getAptResult)) {
                     $getDonor = "SELECT User.*,Donor.* 
-                                FROM User INNER JOIN Donor WHERE User.UserID = $apt[DonorID]";
+                                FROM User INNER JOIN Donor ON User.UserID = Donor.UserID
+                                WHERE Donor.UserID = $apt[DonorID]";
                     $getDonorResult = mysqli_query($conn, $getDonor);
                     $donorData = mysqli_fetch_assoc($getDonorResult);
-
                     echo "<tr>
-                    <th scope='row'>$apt[AppointmentID]</th>
-                    <th style='display:none;'>$donorData[IsWhole]</th>
-                    <th style='display:none;'>$donorData[IsAphresis]</th>
-                    <th style='display:none';>$donorData[Gender]</th>
+                    <td scope='row'><b>$apt[AppointmentID]</b></td>
+                    <td style='display:none;'>$donorData[IsWhole]</th>
+                    <td style='display:none;'>$donorData[IsAphresis]</th>
                     <td>$donorData[FirstName] $donorData[LastName]</td>
                     <td>$donorData[Gender]</td>
                     <td>$apt[AppointedDate]</td>
@@ -75,11 +77,11 @@ include "completeApt.php";
                 </div>
                 <div class="modal-body">
                     <form id="donation" action="" method="POST">
+                        <input type="hidden" id="isAphresis">
                         <div class="form-group mb-3">
                             <label class="form-label" for="aptID">Appointment ID</label>
                             <input type="text" class="form-control" id="aptID" name="aptID" readonly>
                         </div>
-                        <input type="hidden" id="gender">
                         <div class="row">
                             <div class="col">
                                 <div class="form-group mb-3">
@@ -100,13 +102,13 @@ include "completeApt.php";
                             <div class="col">
                                 <div class="form-group mb-3">
                                     <label class="form-label" for="haemo">Haemoglobin Level (gm/dL)</label>
-                                    <input type="number" min="0" step="0.1" class="form-control" id="haemo" name="haemo" placeholder="Haemoglobin Level" onkeyup="checkCondition();" required />
+                                    <input type="number" min="0" step="0.1" class="form-control" id="haemo" name="haemo" placeholder="Haemoglobin Level" onchange="checkHaemo(this.value);" required />
                                 </div>
                             </div>
                         </div>
                         <div class="form-group mb-3">
                             <label class="form-label" for="weight">Weight (kg)</label>
-                            <input type="number" min="0" step="0.1" class="form-control" id="weight" name="weight" placeholder="Weight" onkeyup="checkCondition();" required />
+                            <input type="number" min="0" step="0.1" class="form-control" id="weight" name="weight" placeholder="Weight" onchange="checkWeight(this.value);" required />
                         </div>
                         <div class="form-group mb-3" id="type">
                             <label class="form-label" for="donationType">Donation Type</label></br>
@@ -121,11 +123,12 @@ include "completeApt.php";
                         </div>
                         <div class="form-group mb-3">
                             <label class="form-label" for="amount">Donated Amount (ml)</label>
-                            <input type="text" class="form-control" id="amount" name="amount" placeholder="Amount" readonly />
+                            <input type="number" class="form-control" id="amount" name="amount" placeholder="Amount" readonly />
                         </div>
                         <div class="modal-footer">
                             <button type="submit" id="complete" name="complete" class="btn btn-primary me-auto">Complete</button>
-                            <button type="submit" id="remove" name="remove" class="btn btn-danger" style="display:none;">Remove</button>
+                            <p class="me-auto" id="error"></p>
+                            <button type="submit" id="remove" name="remove" class="btn btn-danger">Remove</button>
                         </div>
                     </form>
                 </div>
@@ -135,46 +138,78 @@ include "completeApt.php";
     </div>
 
     <script>
-        function checkCondition() {
-            let haemo = document.getElementById('haemo').value;
-            let weight = document.getElementById('weight').value;
-            let gender = document.getElementById('gender').value;
+        function setEditable(x) {
             let completeBtn = document.getElementById('complete');
-            let removeBtn = document.getElementById('remove');
             let amount = document.getElementById('amount');
-            let type = document.getElementById('type');
-            let whole = document.getElementById('whole');
+            let type = document.getElementsByName('donationType');
+            let form = document.getElementsByClassName('form-control');
+            let error = document.getElementById('error');
 
-            if (gender == "Male" && (haemo < 13.2 || haemo > 16.6) || weight < 45) {
-                amount.value = "INELIGIBLE";
-                completeBtn.disabled = true;
-                removeBtn.style.display = "block";
-                type.style.display = "none";
-                whole.required = false;
-            } else if (gender == "Female" && (haemo < 11.6 || haemo > 15) || weight < 45) {
-                amount.value = "INELIGIBLE";
-                completeBtn.disabled = true;
-                removeBtn.style.display = "block";
-                type.style.display = "none";
-                whole.required = false;
-            } else {
-                if (weight >= 45 && weight <= 50) {
-                    amount.value = "350";
-                } else if (weight > 50) {
-                    amount.value = "450";
-                }
+            if (x == true) {
+                error.style.display = "none";
+                amount.readOnly = false;
                 completeBtn.disabled = false;
-                removeBtn.style.display = "none";
-                type.style.display = "block";
-                whole.required = true;
+                type.disabled = false;
+                form.required = true;
+            } else {
+                error.innerHTML = "INELIGIBLE";
+                error.style.display = "block";
+                completeBtn.disabled = true;
+                type.disabled = true;
+                form.required = false;
             }
+        }
+
+        function checkHaemo(haemo) {
+            let weight = document.getElementById('weight');
+
+            if (haemo < 11 || haemo > 16) {
+                setEditable(false);
+                weight.disabled = true;
+                weight.required = false;
+            } else {
+                setEditable(true);
+                weight.disabled = false;
+                weight.required = true;
+            }
+        }
+
+        function checkWeight(weight) {
+            let haemo = document.getElementById('haemo');
+            let amount = document.getElementById('amount');
+            let isAphresis = document.getElementById('isAphresis').value;
+            let aphresis = document.getElementById('aphresis');
+
+            if (weight < 45) {
+                setEditable(false);
+                haemo.disabled = true;
+                haemo.required = false;
+            } else if (weight >= 45) {
+                if (weight <= 50) {
+                    amount.max = 350;
+                    if (isAphresis == 1) {
+                        aphresis.disabled = true;
+                        aphresis.checked = false;
+                    }
+                }
+                if (weight > 50) {
+                    amount.max = 450;
+                    if (weight >= 55 && isAphresis == 1) {
+                        aphresis.disabled = false;
+                    }
+                }
+                setEditable(true);
+                haemo.disabled = false;
+                haemo.required = true;
+            }
+
         }
 
         $(document).ready(function() {
             $('#completeApt').on('click', function() {
                 //retrieve data from table
                 $tr = $(this).closest('tr');
-                var data = $tr.children("th").map(function() {
+                var data = $tr.children("td").map(function() {
                     return $(this).text();
                 }).get();
 
@@ -183,16 +218,17 @@ include "completeApt.php";
 
                 let whole = document.getElementById('whole');
                 let aphresis = document.getElementById('aphresis');
-                if (data[2] == 0) {
-                    aphresis.disabled = true;
-                }
                 if (data[1] == 0) {
                     whole.disabled = true;
+                } else {
+                    whole.disabled = false;
                 }
-
-                $('#gender').val(data[3]);
-
-
+                $('#isAphresis').val(data[2]);
+                if (data[2] == 0) {
+                    aphresis.disabled = true;
+                } else {
+                    aphresis.disabled = false;
+                }
             });
         });
     </script>

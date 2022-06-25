@@ -28,48 +28,51 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-$checkApt = "SELECT * FROM Appointment WHERE DonorID = $userID LIMIT 1";
+$checkApt = "SELECT * FROM Appointment WHERE DonorID = $userID ORDER BY AppointmentID DESC LIMIT 1";
 $checkResult = mysqli_query($conn, $checkApt);
 $row = mysqli_num_rows($checkResult);
 $AppointmentStatus = mysqli_fetch_assoc($checkResult);
-$status = $AppointmentStatus['AppointmentStatus'];
 $msgVis = "none";
 $message = "";
 
-if ($row == 1 && $status == "ongoing") {
-    $hasApt = "block";
-    $noApt = "none";
-} else if ($row == 0) {
+if ($row == 0) {
     $hasApt = "none";
     $noApt = "block";
-} else if ($row == 1 && $status != "ongoing") {
-    $hasApt = "none";
-    $noApt = "block";
-    $getDonation = "SELECT DonationType FROM BloodDonation WHERE AppointmentID = $AppointmentStatus[AppointmentID]";
-    $getDonationResult = mysqli_query($conn, $getDonation);
-    $getDonation = mysqli_fetch_assoc($getDonationResult);
+} else {
+    $status = $AppointmentStatus['AppointmentStatus'];
+    if ($status == "ongoing") {
+        $hasApt = "block";
+        $noApt = "none";
+    } else {
+        $hasApt = "none";
+        $noApt = "block";
+        $getDonation = "SELECT DonationType FROM BloodDonation WHERE AppointmentID = $AppointmentStatus[AppointmentID]";
+        $getDonationResult = mysqli_query($conn, $getDonation);
+        $getDonation = mysqli_fetch_assoc($getDonationResult);
 
-    $lastDate = $AppointmentStatus['AppointedDate'];
-    $datetime = new DateTime($lastDate);
+        $lastDate = $AppointmentStatus['AppointedDate'];
+        $datetime = new DateTime($lastDate);
 
-    if ($status == "completed") {
-        $msgVis = "block";
-        if ($getDonation['DonationType'] == 'w') {
-            $datetime->modify('+2 months');
-            $minDate = $datetime->format('Y-m-d');
-            $message = "Thank you for your whole blood donation, you are advised to rest for 2 months (until $minDate) before next donation.";
-        } else if ($getDonation['DonationType'] == 'a') {
+        if ($status == "completed") {
+            $msgVis = "block";
+            if ($getDonation['DonationType'] == 'w') {
+                $datetime->modify('+2 months');
+                $minDate = $datetime->format('Y-m-d');
+                $message = "Thank you for your whole blood donation, you are advised to rest for 2 months (until $minDate) before next donation.";
+            } else if ($getDonation['DonationType'] == 'a') {
+                $datetime->modify('+2 weeks');
+                $minDate = $datetime->format('Y-m-d');
+                $message = "Thank you for your aphresis blood donation, you are advised to rest for 2 weeks (until $minDate) before next donation.";
+            }
+        } else if ($status == "rejected") {
+            $msgVis = "block";
             $datetime->modify('+2 weeks');
             $minDate = $datetime->format('Y-m-d');
-            $message = "Thank you for your aphresis blood donation, you are advised to rest for 2 weeks (until $minDate) before next donation.";
+            $message = "Due to your health condition, you are advised to rest for 2 weeks (until $minDate) before making new appointment.";
         }
-    } else if ($status == "rejected") {
-        $msgVis = "block";
-        $datetime->modify('+2 weeks');
-        $minDate = $datetime->format('Y-m-d');
-        $message = "Due to your health condition, you are advised to rest for 2 weeks (until $minDate) before making new appointment.";
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -165,7 +168,7 @@ if ($row == 1 && $status == "ongoing") {
                 <div class="row">
                     <div class="form-group mb-3 col">
                         <label class="form-label" for="date">Date</label>
-                        <input type="date" class="form-control" id="date" name="date" min="<?php echo $minDate?>"onchange="setCentre(this.value);" required />
+                        <input type="date" class="form-control" id="date" name="date" min="<?php echo $minDate ?>" onchange="setCentre(this.value);" required />
                     </div>
                     <div class="form-group mb-3 col">
                         <label class="form-label" for="session">Session</label>
@@ -253,7 +256,8 @@ if ($row == 1 && $status == "ongoing") {
             date.max = endDate;
 
             if (startDate == undefined) {
-                date.min = "<?php echo $minDate?>";
+                date.min = "<?php echo $minDate ?>";
+                date.value = "<?php echo $minDate ?>";
             }
         }
     </script>
