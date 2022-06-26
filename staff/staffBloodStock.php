@@ -8,15 +8,20 @@ $getBloodResult = mysqli_query($conn, $getBlood);
 
 $bloodGroup = array("A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-");
 $BloodArray = [];
-
 ?>
 
 <!DOCTYPE html>
 
 <html>
 
+<head>
+    <style>
+
+    </style>
+</head>
+
 <body>
-    <div class="content container border w3-round-large" style="height:80vh;overflow:auto;">
+    <div class="main content container border w3-round-large" style="height:80vh;overflow:auto;">
         <h3>Blood Stock<span class="index"><?php echo $centreName ?></h3>
 
         <table id="stock" class="table table-hover sorttable">
@@ -47,11 +52,11 @@ $BloodArray = [];
                         <td>Shortage</td>
                     </tr>";
                 }
+
                 ?>
             </tbody>
         </table>
     </div>
-
 
 </body>
 

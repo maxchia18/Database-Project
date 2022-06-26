@@ -224,7 +224,6 @@ $count = mysqli_num_rows($getHistoryResult);
                         </div>
                     </form>
                 </div>
-
             </div>
         </div>
     </div>

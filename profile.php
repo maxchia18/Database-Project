@@ -1,13 +1,18 @@
 <?php
 include "header.php";
 
-$getHistory = "SELECT BloodDonation.*,Appointment.* FROM Appointment 
-               INNER JOIN BloodDonation ON Appointment.AppointmentID = BloodDonation.AppointmentID
-               WHERE AppointmentStatus = 'completed' AND Appointment.DonorID = $userID 
-               ORDER BY BloodDonation.DonationID";
-$getHistoryResult = mysqli_query($conn, $getHistory);
-$count = mysqli_num_rows($getHistoryResult);
+$getDonor = "SELECT User.*, Donor.*,Blood.BloodGroup FROM User
+             INNER JOIN Donor ON User.UserID = Donor.UserID
+             INNER JOIN Blood ON User.UserID = Blood.DonorID
+             WHERE User.UserID = $userID";
+$getDonorResult = mysqli_query($conn, $getDonor);
+$getDonor = mysqli_fetch_assoc($getDonorResult);
 
+if ($getDonor['Gender'] == 'M') {
+    $gender = "Male";
+} else {
+    $gender = "Female";
+}
 ?>
 
 <!DOCTYPE html>
@@ -60,6 +65,10 @@ $count = mysqli_num_rows($getHistoryResult);
             background-color: white;
             border-radius: 25px;
         }
+
+        #msg {
+            color: red;
+        }
     </style>
 </head>
 
@@ -76,11 +85,63 @@ $count = mysqli_num_rows($getHistoryResult);
     </div>
 
     <div class="main w3-padding-large">
-        <h1 class="mb-4">My Profile</h1>
+        <h1 class="mb-4">Hi there, <?php echo $getDonor['FirstName']; ?>.</h1>
         <div class="container shadow-sm rounded border w3-padding">
-
+            <form id="profile" method="POST">
+                <div class="form-group row mb-3">
+                    <div class="form-group col-md-6">
+                        <label class="form-label" for="fName">First Name</label>
+                        <input type="text" class="form-control" id="fName" name="fName" onkeydown="return /^[a-zA-Z-'./ ]*$/i.test(event.key)" maxlength="50">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label class="form-label" for="lName">Last Name</label>
+                        <input type="text" class="form-control" id="lName" name="lName" onkeydown="return /^[a-zA-Z-'./ ]*$/i.test(event.key)" maxlength="50">
+                    </div>
+                </div>
+                <div class="form-group row mt-3">
+                    <div class="form-group col">
+                        <label class="form-label" for="weight">Weight</label>
+                        <input type="number" class="form-control" id="weight" name="weight">
+                    </div>
+                    <div class="form-group col">
+                        <label class="form-label" for="age">Age</label>
+                        <input type="text" class="form-control" id="age" name="age">
+                    </div>
+                    <div class="form-group col">
+                        <label class="form-label" for="bloodGroup">Blood Group</label>
+                        <input type="text" class="form-control" id="bloodGroup" name="bloodGroup" disabled>
+                    </div>
+                    <div class="form-group col">
+                        <label class="form-label" class="form-label" for="gender">Gender</label>
+                        <input type="text" class="form-control" id="gender" name="gender" disabled>
+                    </div>
+                </div>
+                <div class="form-group my-3">
+                    <label class="form-label" for="email">Email</label>
+                    <input type="email" class="form-control" id="email" name="email">
+                </div>
+                <div class="pw" style="display:none;">
+                    <label class="form-label" for="password">Password</label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Password" maxlength="50" />
+                    </div>
+                </div>
+            </form>
         </div>
-    </div>
+
+        <script>
+            $("#profile :input:not(button)").prop("readOnly", true);
+
+            $(document).ready(function() {
+                $('#fName').val('<?php echo $getDonor['FirstName']; ?>');
+                $('#lName').val('<?php echo $getDonor['LastName']; ?>');
+                $('#weight').val('<?php echo $getDonor['Weight']; ?>');
+                $('#age').val('<?php echo $getDonor['Age']; ?>')
+                $('#bloodGroup').val('<?php echo $getDonor['BloodGroup']; ?>');
+                $('#gender').val('<?php echo $gender; ?>');
+                $('#email').val('<?php echo $getDonor['Email']; ?>');
+            });
+        </script>
 </body>
 
 </html>

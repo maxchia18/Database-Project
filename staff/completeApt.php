@@ -1,26 +1,28 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $aptID = $_POST['aptID'];
-    $bloodgroup = $_POST['bloodgroup'];
-    $haemo = $_POST['haemo'];
-    $weight = $_POST['weight'];
-    $donationType = $_POST['donationType'];
-    $amount = $_POST['amount'];
+    if (isset($_POST['complete']) || isset($_POST['remove'])) {
+        $aptID = $_POST['aptID'];
+        $bloodgroup = $_POST['bloodgroup'];
+        $haemo = $_POST['haemo'];
+        $weight = $_POST['weight'];
+        $donationType = $_POST['donationType'];
+        $amount = $_POST['amount'];
 
-    //get data
-    $getData = "SELECT Appointment.*,Donor.*,Blood.BloodID FROM Appointment 
+        //get data
+        $getData = "SELECT Appointment.*,Donor.*,Blood.BloodID FROM Appointment 
                 INNER JOIN Donor ON Appointment.DonorID = Donor.UserID 
                 INNER JOIN Blood ON Appointment.DonorID = Blood.DonorID 
                 WHERE AppointmentID = $aptID";
-    $getDataResult = mysqli_query($conn, $getData);
-    $getData = mysqli_fetch_assoc($getDataResult);
-    $donorID = $getData['DonorID'];
-    $bloodID = $getData['BloodID'];
-    $appointedDate = $getData['AppointedDate'];
-    $lastDate = $getData['LastDonationDate'];
-    $datetime = new DateTime($appointedDate);
-    $datetime->modify('-6 months');
-    $_6months = $datetime->format('Y-m-d');
+        $getDataResult = mysqli_query($conn, $getData);
+        $getData = mysqli_fetch_assoc($getDataResult);
+        $donorID = $getData['DonorID'];
+        $bloodID = $getData['BloodID'];
+        $appointedDate = $getData['AppointedDate'];
+        $lastDate = $getData['LastDonationDate'];
+        $datetime = new DateTime($appointedDate);
+        $datetime->modify('-6 months');
+        $_6months = $datetime->format('Y-m-d');
+    }
 
     if (isset($_POST['complete'])) {
         //update data
@@ -81,4 +83,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     //refresh
     echo "<meta http-equiv='refresh' content='0'>";
 }
-?>

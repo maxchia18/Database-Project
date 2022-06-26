@@ -219,18 +219,16 @@ if ($row == 0) {
                 </div>
             </div>
         </form>
-        
-<hr style="margin-top:5vh;">
 
-        <div class="row">
-            <h1 class="mb-4 col-10">Centre Details</h1>
-        </div>
+        <hr style="margin-top:5vh;">
+
+        <h1 class="mb-4">Centre Details</h1>
         <div class="container shadow rounded border w3-padding" id='centreDetails'>
-            <div class='row'>
+            <div class='row mt-4'>
                 <h3 class='col'>Blood Bank</h3>
                 <input type='text' id='bFilter' class='col form-check-input px-1 py-3 rounded' placeholder='Search...'>
             </div>
-            <table class="table table-hover table-striped">
+            <table class="table table-hover table-striped mt-3 mb-5">
                 <thead>
                     <tr>
                         <th scope="col">#</th>
@@ -262,7 +260,7 @@ if ($row == 0) {
                 <h3 class='col'>Mobile Centre</h3>
                 <input type='text' id='mFilter' class='col form-check-input px-1 py-3 rounded' placeholder='Search...'>
             </div>
-            <table class="table table-hover table-striped">
+            <table class="table table-hover table-striped mt-3">
                 <thead>
                     <tr>
                         <th scope="col">#</th>

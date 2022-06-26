@@ -42,6 +42,8 @@ if ($userType == "donor") {
     <!-- Font Awesome JS -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
     <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+    <!-- CHART.JS -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         html,
@@ -51,7 +53,7 @@ if ($userType == "donor") {
         }
 
         .main {
-            overflow: hidden !important;
+            overflow: auto;
         }
 
         header {
@@ -138,6 +140,9 @@ if ($userType == "donor") {
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="bloodStock-tab" data-bs-toggle="tab" data-bs-target="#bloodStock" type="button" role="tab" aria-controls="bloodStock" aria-selected="false">Blood Stock</button>
         </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="staff-tab" data-bs-toggle="tab" data-bs-target="#staff" type="button" role="tab" aria-controls="bloodStock" aria-selected="false">Staff</button>
+        </li>
     </ul>
     <div class="tab-content main" id="myTabContent">
         <div class="tab-pane fade show active w3-padding" id="appointment" role="tabpanel" aria-labelledby="appointment-tab">
@@ -148,6 +153,9 @@ if ($userType == "donor") {
         </div>
         <div class="tab-pane fade w3-padding" id="bloodStock" role="tabpanel" aria-labelledby="bloodStock-tab">
             <?php include "staffBloodStock.php"; ?>
+        </div>
+        <div class="tab-pane fade w3-padding" id="staff" role="tabpanel" aria-labelledby="staff-tab">
+            <?php include "staffData.php"; ?>
         </div>
     </div>
 

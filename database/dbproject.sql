@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 26, 2022 at 09:49 AM
+-- Generation Time: Jun 26, 2022 at 05:22 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -36,24 +36,6 @@ CREATE TABLE `appointment` (
   `CentreID` int(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Dumping data for table `appointment`
---
-
-INSERT INTO `appointment` (`AppointmentID`, `DonorID`, `AppointedDate`, `AppointedSession`, `AppointmentStatus`, `CentreID`) VALUES
-(1, 4, '2022-07-08', '11:00:00', 'completed', 1),
-(2, 2, '2022-07-09', '15:00:00', 'completed', 8),
-(3, 3, '2022-06-30', '09:00:00', 'completed', 7),
-(4, 5, '2022-06-28', '10:00:00', 'completed', 1),
-(5, 10, '2022-07-08', '09:00:00', 'completed', 1),
-(6, 9, '2022-07-08', '11:00:00', 'completed', 1),
-(7, 11, '2022-07-14', '12:00:00', 'rejected', 8),
-(8, 5, '2022-08-28', '10:00:00', 'completed', 1),
-(9, 5, '2022-08-28', '09:00:00', 'completed', 1),
-(10, 10, '2022-09-08', '09:00:00', 'completed', 8),
-(11, 9, '2022-09-08', '11:00:00', 'ongoing', 8),
-(12, 3, '2022-08-30', '09:00:00', 'ongoing', 8);
-
 -- --------------------------------------------------------
 
 --
@@ -66,20 +48,6 @@ CREATE TABLE `blood` (
   `HaemoglobinLevel` double DEFAULT NULL,
   `DonorID` int(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `blood`
---
-
-INSERT INTO `blood` (`BloodID`, `BloodGroup`, `HaemoglobinLevel`, `DonorID`) VALUES
-(1, 'A+', 12.7, 2),
-(2, 'A-', 15, 3),
-(3, 'B-', 14, 4),
-(4, 'A+', 15, 5),
-(5, 'A+', 13, 9),
-(6, 'A-', 13, 10),
-(7, 'A+', 13, 11),
-(8, 'B-', NULL, 12);
 
 -- --------------------------------------------------------
 
@@ -118,21 +86,6 @@ CREATE TABLE `blooddonation` (
   `StaffID` int(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Dumping data for table `blooddonation`
---
-
-INSERT INTO `blooddonation` (`DonationID`, `BloodID`, `AppointmentID`, `DonationAmount`, `DonationType`, `StaffID`) VALUES
-(1, 4, 4, 450, 'w', 1),
-(2, 1, 2, 450, 'w', 8),
-(3, 2, 3, 450, 'w', 7),
-(4, 3, 1, 450, 'w', 1),
-(5, 5, 6, 350, 'w', 1),
-(6, 6, 5, 450, 'w', 1),
-(7, 4, 8, 450, 'w', 1),
-(8, 4, 9, 450, 'a', 1),
-(9, 6, 10, 360, 'w', 8);
-
 -- --------------------------------------------------------
 
 --
@@ -143,21 +96,6 @@ CREATE TABLE `bloodstock` (
   `DonationID` int(5) NOT NULL,
   `CentreID` int(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `bloodstock`
---
-
-INSERT INTO `bloodstock` (`DonationID`, `CentreID`) VALUES
-(1, 1),
-(2, 8),
-(3, 7),
-(4, 1),
-(5, 1),
-(6, 1),
-(7, 1),
-(8, 1),
-(9, 8);
 
 -- --------------------------------------------------------
 
@@ -200,21 +138,6 @@ CREATE TABLE `donationhistory` (
   `DonationID` int(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
---
--- Dumping data for table `donationhistory`
---
-
-INSERT INTO `donationhistory` (`DonorID`, `DonationID`) VALUES
-(2, 2),
-(3, 3),
-(4, 4),
-(5, 1),
-(5, 7),
-(5, 8),
-(9, 5),
-(10, 6),
-(10, 9);
-
 -- --------------------------------------------------------
 
 --
@@ -229,20 +152,6 @@ CREATE TABLE `donor` (
   `IsAphresis` tinyint(1) NOT NULL DEFAULT 0,
   `LastDonationDate` date DEFAULT '1900-01-01'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `donor`
---
-
-INSERT INTO `donor` (`UserID`, `Weight`, `Age`, `IsWhole`, `IsAphresis`, `LastDonationDate`) VALUES
-(2, 55, 21, 1, 0, '2022-07-09'),
-(3, 66, 22, 1, 0, '2022-06-30'),
-(4, 58, 44, 1, 0, '2022-07-08'),
-(5, 56, 19, 1, 1, '1900-01-01'),
-(9, 47, 57, 1, 0, '2022-07-08'),
-(10, 56, 31, 1, 1, '2022-09-08'),
-(11, 56, 49, 1, 0, '1900-01-01'),
-(12, 45, 22, 1, 0, '1900-01-01');
 
 -- --------------------------------------------------------
 
@@ -285,9 +194,7 @@ CREATE TABLE `staff` (
 
 INSERT INTO `staff` (`UserID`, `CentreID`) VALUES
 (1, 1),
-(6, 6),
-(7, 7),
-(8, 8);
+(2, 4);
 
 -- --------------------------------------------------------
 
@@ -311,17 +218,7 @@ CREATE TABLE `user` (
 
 INSERT INTO `user` (`UserID`, `FirstName`, `LastName`, `Gender`, `Email`, `Password`, `UserType`) VALUES
 (1, 'Max', 'Chia', 'Male', '75590@siswa.unimas.my', '$2y$10$by9PuERUFxh5q69MeD0/LOXfGFidmXNQbx8VYszV/XBG6MXXiEpXm', 'staff'),
-(2, 'Kha Hau', 'Chong', 'Male', 'khahau@gmail.com', '$2y$10$OKWbC7R8PdKhuQ/k4LmKqufajZ70Hg.XCQJ1Iy7T4RzD9HeVqny36', 'donor'),
-(3, 'Brady', 'Chung', 'Male', 'brady@gmail.com', '$2y$10$FbkwmwRndhNJNl7o08s1R.2csMBng7KxONdT5LEFtEgqoukIkFW3q', 'donor'),
-(4, 'Muhammad', 'Syahin', 'Male', 'syahin@gmail.com', '$2y$10$ghe1OOtkW3p1tYnB9XTEhOCmn3GyIT0bAGxPElOgtYEcuhABlwcJi', 'donor'),
-(5, 'Muthu a/l', 'Suppiah', 'Male', 'muthu@gmail.com', '$2y$10$JuHjU7uVYBXSi90FIiWaF.0W03UDxfJjOHfBywK3i043MbUIO9RPa', 'donor'),
-(6, 'Jovian ', 'Jayome', 'Male', '70019@siswa.unimas.my', '$2y$10$iXH9geuz.JaJ8eYAsrzUs.dTkA3PuyUl/aMN2gy7H5EBZRHnDo2Dy', 'staff'),
-(7, 'Nurrul', 'Nazwa', 'Female', '76391@siswa.unimas.my', '$2y$10$HH5Ch9lBpSIecI/YKZcrzeozCckNW00MfI66PUPTGLzku.UIBznZm', 'staff'),
-(8, 'Jaymax', 'Bravyain', 'Male', '75132@siswa.unimas.my', '$2y$10$3cJ0xzNAsRYvnjGruvmUfecj20GDshtjL9XKbWEDJNkf3oSptPlp6', 'staff'),
-(9, 'Siti binti', 'Abdullah', 'Female', 'siti@gmail.com', '$2y$10$4Y4XueJfpmqDtzOJUAJxN.yiPwYZFGWrWZlcAcOP1iwbmHAwP1.eO', 'donor'),
-(10, 'Janice', 'Po', 'Female', 'janice@gmail.com', '$2y$10$qR1oGaoegjjz.iTDMM0CCeywz6r9cSv9wvFypr1LFXIAe0jAe0cnm', 'donor'),
-(11, 'Lee ', 'Xin', 'Male', 'lee@gmail.com', '$2y$10$BzoThc6mpaPHYdBdJrrUH.FvnSmDKY.GUDWxYIHRDETIbu46oCxji', 'donor'),
-(12, 'Sherry', 'Lam', 'Female', 'sherry@gmail.com', '$2y$10$aIyswZd8Wu0fDabW1T5AO.V9ipg/ll/NzVPgzAX0Pl.z0cIbWe4rm', 'donor');
+(2, 'Jovian', 'Jayome', 'Male', '70019@siswa.unimas.my', '$2y$10$ZP5oZIQpxxUjnvOLepBhvegnphuCvQgV2dpxRRynGYkVD/Ytfv5WS', 'staff');
 
 --
 -- Indexes for dumped tables
@@ -428,7 +325,7 @@ ALTER TABLE `blooddonation`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `UserID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `UserID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables
@@ -459,7 +356,7 @@ ALTER TABLE `bloodbankcentre`
 ALTER TABLE `blooddonation`
   ADD CONSTRAINT `appointment-donation` FOREIGN KEY (`AppointmentID`) REFERENCES `appointment` (`AppointmentID`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `blood-donation` FOREIGN KEY (`BloodID`) REFERENCES `blood` (`BloodID`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `staff-donation` FOREIGN KEY (`StaffID`) REFERENCES `staff` (`UserID`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `staff-donation` FOREIGN KEY (`StaffID`) REFERENCES `staff` (`UserID`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `bloodstock`

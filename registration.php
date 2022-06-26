@@ -12,7 +12,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'];
     $submit = $_POST['signUp'];
     $usertype = "donor";
-echo $gender;
     //check for existing ID
     $checkQuery = "SELECT Email FROM User WHERE Email = '$email'";
     $result = mysqli_query($conn, $checkQuery);
@@ -33,21 +32,21 @@ echo $gender;
                     alert("Registration Successful, Sign in now.");
                     window.location = "login.php";
                 </script><?php
-                        } else {
-                            echo "Error: " . $sql . "<br>" . $conn->error;
-                        }
-                    }
-                } else {
-                    echo '<script type ="text/JavaScript">';
-                    echo 'alert("Email exists.")';
-                    echo '</script>';
-                }
+            } else {
+                echo "Error: " . $sql . "<br>" . $conn->error;
             }
+        }
+    } else {
+        echo '<script type ="text/JavaScript">';
+        echo 'alert("Email exists.")';
+        echo '</script>';
+    }
+}
 
-            if (isset($_SESSION['UserID'])) {
-                redirectHome($userType);
-            }
-                            ?>
+if (isset($_SESSION['UserID'])) {
+    redirectHome($userType);
+}
+?>
 
 <!DOCTYPE html>
 <html>
@@ -168,7 +167,6 @@ echo $gender;
             <div class="form-group mb-3">
                 <label class="form-label" for="email">Email</label>
                 <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" maxlength="50" required />
-
             </div>
             <div class="form-group mb-3">
                 <label class="form-label" for="password">Password</label>
