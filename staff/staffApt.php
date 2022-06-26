@@ -55,7 +55,7 @@ include "completeApt.php";
                     <td>$apt[AppointedDate]</td>
                     <td>$apt[AppointedSession]</td>
                     <td>$centreName</td>
-                    <td><button type='button' class='completeApt actionBtn btn btn-info border w3-round-xlarge' name='completeApt' data-bs-toggle='modal' data-bs-target='#completeDonation'>	
+                    <td><button type='button' class='completeApt btn btn-info border w3-round-xlarge' name='completeApt' data-bs-toggle='modal' data-bs-target='#completeDonation'>	
                     <i class='fa fa-check'></i></button></td>
                 </tr>";
                 } ?>
@@ -65,6 +65,44 @@ include "completeApt.php";
         if (mysqli_num_rows($getAptResult) == 0) {
             echo "<h2 class='w3-center mt-5'>No new appointment, check back later.</h2>";
         } ?>
+        <hr>
+        <h3>Appointment History<span class="index"># ➜ Appointment ID</h3>
+
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Gender</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Session</th>
+                    <th scope="col">Centre</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                $getAppointment = "SELECT * FROM Appointment WHERE CentreID = $centreID AND AppointmentStatus != 'ongoing' ORDER BY AppointedDate,AppointedSession";
+                $getAptResult = mysqli_query($conn, $getAppointment);
+                while ($apt = mysqli_fetch_assoc($getAptResult)) {
+                    $getDonor = "SELECT User.*,Donor.* 
+                                FROM User INNER JOIN Donor ON User.UserID = Donor.UserID
+                                WHERE Donor.UserID = $apt[DonorID]";
+                    $getDonorResult = mysqli_query($conn, $getDonor);
+                    $donorData = mysqli_fetch_assoc($getDonorResult);
+                    $aptStatus = ucfirst($apt['AppointmentStatus']);
+                    echo "<tr>
+                        <td scope='row'><b>$apt[AppointmentID]</b></td>
+                        <td>$donorData[FirstName] $donorData[LastName]</td>
+                        <td>$donorData[Gender]</td>
+                        <td>$apt[AppointedDate]</td>
+                        <td>$apt[AppointedSession]</td>
+                        <td>$centreName</td>
+                        <td>$aptStatus<td>
+                    </tr>";
+                } ?>
+            </tbody>
+        </table>
     </div>
 
     <!-- Modal -->
@@ -137,6 +175,7 @@ include "completeApt.php";
         </div>
     </div>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
         function setEditable(x) {
             let completeBtn = document.getElementById('complete');

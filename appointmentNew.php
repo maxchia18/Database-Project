@@ -8,23 +8,25 @@ $mobile = "SELECT DonationCentre.*, MobileCentre.* FROM DonationCentre
            INNER JOIN MobileCentre ON DonationCentre.CentreID = MobileCentre.CentreID";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $centre = explode(",", $_POST['centre']);
-    $date = $_POST['date'];
-    $session = $_POST['session'] . ":00:00";
+    if (isset($_POST['appoint'])) {
+        $centre = explode(",", $_POST['centre']);
+        $date = $_POST['date'];
+        $session = $_POST['session'] . ":00:00";
 
-    $centreID = $centre[0];
-    $insertApt = "INSERT INTO Appointment(DonorID, AppointedDate, AppointedSession, CentreID)
+        $centreID = $centre[0];
+        $insertApt = "INSERT INTO Appointment(DonorID, AppointedDate, AppointedSession, CentreID)
                   VALUES ('$userID','$date','$session','$centreID')";
 
-    if ($centre != "" && $session != "") {
-        if (mysqli_query($conn, $insertApt)) {
-            echo "<script>
+        if ($centre != "" && $session != "") {
+            if (mysqli_query($conn, $insertApt)) {
+                echo "<script>
                 alert('Appointment on " . $date . " at " . $session . " made successfully');
                 </script>";
+            }
+        } else {
+            $errVis = "block";
+            $errMsg = "Please select all required fields.";
         }
-    } else {
-        $errVis = "block";
-        $errMsg = "Please select all required fields.";
     }
 }
 
@@ -51,10 +53,22 @@ if ($row == 0) {
         $getDonationResult = mysqli_query($conn, $getDonation);
         $getDonation = mysqli_fetch_assoc($getDonationResult);
 
-        $lastDate = $AppointmentStatus['AppointedDate'];
+        $getLastDate = "SELECT LastDonationDate FROM Donor WHERE UserID = $userID";
+        $lastDateResult = mysqli_query($conn, $getLastDate);
+        $getLastDate = mysqli_fetch_assoc($lastDateResult);
+        $lastDate = $getLastDate['LastDonationDate'];
         $datetime = new DateTime($lastDate);
-        if ($status == "completed") {
+
+        if ($status == "completed" || $status == "cancelled") {
             $msgVis = "block";
+            if ($status == "cancelled") {
+                $checkApt = "SELECT Appointment.*,BloodDonation.DonationType FROM Appointment
+                             INNER JOIN BloodDonation ON Appointment.AppointmentID = BloodDonation.AppointmentID
+                             WHERE Appointment.DonorID = $userID AND AppointmentStatus = 'completed'
+                            ORDER BY Appointment.AppointmentID DESC LIMIT 1";
+                $checkResult = mysqli_query($conn, $checkApt);
+                $getDonation = mysqli_fetch_assoc($checkResult);
+            }
             if ($getDonation['DonationType'] == 'w') {
                 $datetime->modify('+2 months');
                 $minDate = $datetime->format('Y-m-d');
@@ -159,7 +173,7 @@ if ($row == 0) {
             <h1 class="mb-4">New Appointment</h1>
             <div class="container shadow-sm rounded border w3-padding" id='form'>
                 <h3 class='w3-center' id='hasApt'>We appreciate your kindness, but you have an ongoing
-                    <a href='appointment.php'>appointment</a> to attend.
+                    <a href='appointment.php' style="color:blue;">appointment</a> to attend.
                 </h3>
                 <div style="display:<?php echo $msgVis ?>;">
                     <h4><?php echo $message ?>

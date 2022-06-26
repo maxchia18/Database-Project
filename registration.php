@@ -2,49 +2,52 @@
 include "header.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $fname = $_POST['fname'];
-    $lname = $_POST['lname'];
-    $weight = $_POST['weight'];
-    $bloodgroup = $_POST['bloodgroup'];
-    $age = $_POST['age'];
-    $gender = $_POST['gender'];
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $submit = $_POST['signUp'];
-    $usertype = "donor";
-    //check for existing ID
-    $checkQuery = "SELECT Email FROM User WHERE Email = '$email'";
-    $result = mysqli_query($conn, $checkQuery);
-    $count = mysqli_num_rows($result);
 
-    if ($count == 0) {
-        $password = password_hash($password, PASSWORD_DEFAULT);
-        $sql = "INSERT INTO User(FirstName, LastName, Gender, Email, Password, UserType)
+    if (isset($_POST['signUp'])) {
+        $fname = $_POST['fname'];
+        $lname = $_POST['lname'];
+        $weight = $_POST['weight'];
+        $bloodgroup = $_POST['bloodgroup'];
+        $age = $_POST['age'];
+        $gender = $_POST['gender'];
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+        $submit = $_POST['signUp'];
+        $usertype = "donor";
+        //check for existing ID
+        $checkQuery = "SELECT Email FROM User WHERE Email = '$email'";
+        $result = mysqli_query($conn, $checkQuery);
+        $count = mysqli_num_rows($result);
+
+        if ($count == 0) {
+            $password = password_hash($password, PASSWORD_DEFAULT);
+            $sql = "INSERT INTO User(FirstName, LastName, Gender, Email, Password, UserType)
                 VALUES('$fname','$lname','$gender','$email','$password','$usertype')";
-        if (mysqli_query($conn, $sql)) {
-            $userID = mysqli_insert_id($conn);
-            $sql2 = "INSERT INTO Donor(UserID, Weight, Age)
+            if (mysqli_query($conn, $sql)) {
+                $userID = mysqli_insert_id($conn);
+                $sql2 = "INSERT INTO Donor(UserID, Weight, Age)
                     VALUE('$userID','$weight','$age')";
-            $sql3 = "INSERT INTO Blood(BloodGroup, DonorID)
+                $sql3 = "INSERT INTO Blood(BloodGroup, DonorID)
                     VALUE('$bloodgroup','$userID')";
-            if (mysqli_query($conn, $sql2) && mysqli_query($conn, $sql3)) { ?>
-                <script type="text/JavaScript">
-                    alert("Registration Successful, Sign in now.");
+                if (mysqli_query($conn, $sql2) && mysqli_query($conn, $sql3)) { ?>
+                    <script type="text/JavaScript">
+                        alert("Registration Successful, Sign in now.");
                     window.location = "login.php";
                 </script><?php
-            } else {
-                echo "Error: " . $sql . "<br>" . $conn->error;
+                        } else {
+                            echo "Error: " . $sql . "<br>" . $conn->error;
+                        }
+                    }
+                } else {
+                    echo '<script type ="text/JavaScript">';
+                    echo 'alert("Email exists.")';
+                    echo '</script>';
+                }
             }
         }
-    } else {
-        echo '<script type ="text/JavaScript">';
-        echo 'alert("Email exists.")';
-        echo '</script>';
-    }
-}
 
 if (isset($_SESSION['UserID'])) {
-    redirectHome($userType);
+redirectHome($userType);
 }
 ?>
 

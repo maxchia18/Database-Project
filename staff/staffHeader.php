@@ -42,8 +42,6 @@ if ($userType == "donor") {
     <!-- Font Awesome JS -->
     <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
     <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
-    <!-- CHART.JS -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         html,
@@ -67,8 +65,8 @@ if ($userType == "donor") {
             font-weight: bold;
         }
 
-        .content{
-            padding:0.1% 1%;
+        .content {
+            padding: 0.1% 1%;
         }
 
         .count {
@@ -123,11 +121,10 @@ if ($userType == "donor") {
         </nav>
     </header>
 
-    <?php
+<?php
     $getAppointment = "SELECT * FROM Appointment WHERE CentreID = $centreID AND AppointmentStatus = 'ongoing' ORDER BY AppointedDate,AppointedSession";
     $getAptResult = mysqli_query($conn, $getAppointment);
-    $aptCount = mysqli_num_rows($getAptResult);
-    ?>
+    $aptCount = mysqli_num_rows($getAptResult);?>
     <ul class="nav nav-tabs nav-justified my-1" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="appointment-tab" data-bs-toggle="tab" data-bs-target="#appointment" type="button" role="tab" aria-controls="appointment" aria-selected="true">
@@ -159,6 +156,7 @@ if ($userType == "donor") {
         </div>
     </div>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <!-- sorttable -->
     <script>
         $('th').click(function() {

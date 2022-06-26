@@ -7,50 +7,51 @@ $errMsg = "";
 $errVis = "none";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $emailData = mysqli_real_escape_string($conn, $_POST['email']);
-    $passwordData = mysqli_real_escape_string($conn, $_POST['password']);
-    //get hashed password
-    $sql = "SELECT Password FROM User WHERE Email = '$emailData'";
-    $result = mysqli_query($conn, $sql);
-    $count = mysqli_num_rows($result);
-    if ($count == 1) {
-        $passwordHashed = mysqli_fetch_assoc($result);
-        if (password_verify($passwordData, $passwordHashed['Password'])) {
-            $passwordHashed = $passwordHashed['Password'];
-            $loginData = "SELECT * FROM User WHERE Email = '$emailData' AND Password = '$passwordHashed'";
-            $result = mysqli_query($conn, $loginData);
+    if (isset($_POST['signIn'])) {
+        $emailData = mysqli_real_escape_string($conn, $_POST['email']);
+        $passwordData = mysqli_real_escape_string($conn, $_POST['password']);
+        //get hashed password
+        $sql = "SELECT Password FROM User WHERE Email = '$emailData'";
+        $result = mysqli_query($conn, $sql);
+        $count = mysqli_num_rows($result);
+        if ($count == 1) {
+            $passwordHashed = mysqli_fetch_assoc($result);
+            if (password_verify($passwordData, $passwordHashed['Password'])) {
+                $passwordHashed = $passwordHashed['Password'];
+                $loginData = "SELECT * FROM User WHERE Email = '$emailData' AND Password = '$passwordHashed'";
+                $result = mysqli_query($conn, $loginData);
 
 
-            $user = mysqli_fetch_assoc($result);
-            $_SESSION['UserType'] = $user['UserType'];
-            $_SESSION['UserID'] = $user['UserID'];
-            $_SESSION['UserName'] = $user['FirstName'] . " " . $user['LastName'];
+                $user = mysqli_fetch_assoc($result);
+                $_SESSION['UserType'] = $user['UserType'];
+                $_SESSION['UserID'] = $user['UserID'];
+                $_SESSION['UserName'] = $user['FirstName'] . " " . $user['LastName'];
 
-            echo $_SESSION['UserName'];
-            echo $_SESSION['UserType'];
-            echo $_SESSION['userID'];
+                echo $_SESSION['UserName'];
+                echo $_SESSION['UserType'];
+                echo $_SESSION['userID'];
 
-            if (isset($_SESSION['UserID'])) { ?>
-                <script>
-                    window.location = "index.php";
-                </script><?php
+                if (isset($_SESSION['UserID'])) { ?>
+                    <script>
+                        window.location = "index.php";
+                    </script><?php
+                            }
+                            $errVis = "none";
+                            $errMsg = "";
+                        } else {
+                            $errVis = "block";
+                            $errMsg = "Incorrect password, please try again.";
                         }
-                        $errVis = "none";
-                        $errMsg = "";
-                    } else {
-                        $errVis = "block";
-                        $errMsg = "Incorrect password, please try again.";
-                    }
-                } else {
-                    $errVis = "block";
-                    $errMsg = "Email does not exist.";
-                }
-            }
-
-            if (isset($_SESSION['UserID'])) {
-                redirectHome($userType);
-            }
-                            ?>
+        } else {
+            $errVis = "block";
+            $errMsg = "Email does not exist.";
+        }
+    }
+}
+if (isset($_SESSION['UserID'])) {
+    redirectHome($userType);
+}
+                    ?>
 
 <!DOCTYPE html>
 <html>
@@ -76,8 +77,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             font-size: small;
         }
 
-        #noacc:hover{
-            transition:1s;
+        #noacc:hover {
+            transition: 1s;
         }
     </style>
 </head>

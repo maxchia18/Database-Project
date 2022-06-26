@@ -4,6 +4,17 @@ include "header.php";
 $sql = "SELECT * FROM Appointment WHERE DonorID = '$userID' ORDER BY AppointmentID DESC";
 $result = mysqli_query($conn, $sql);
 $count = mysqli_num_rows($result);
+
+if ($_SERVER["REQUEST_METHOD"] == "POST"){
+    if(isset($_POST['cancelBtn'])){
+        $aptID = $_POST['aptID'];
+
+        $updateCancel = "UPDATE Appointment SET AppointmentStatus = 'cancelled' WHERE AppointmentID = $aptID";
+        if($cancelResult = mysqli_query($conn,$updateCancel)){
+            echo "<script>alert('Cancelled successfully!');</script>";
+        }
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -11,6 +22,7 @@ $count = mysqli_num_rows($result);
 <html>
 
 <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style>
         body {
             overflow: hidden;
@@ -86,13 +98,13 @@ $count = mysqli_num_rows($result);
         <h1 class="mb-4">Appointment</h1>
         <?php
         if ($count == 0) {
-            echo"
+            echo "
             <div class='apt container rounded w3-round-large my-3' style='background-color:#ff7169;'>
             <h2 class='pt-0 pb-3 w3-center' id='noRecord'>Seems like you haven't made any appointment yet!</br>
                     <a href='appointmentNew.php'>Make now</a>?
                 </h2>";
         } else {
-            $i=0;
+            $i = 0;
             while ($apt = mysqli_fetch_assoc($result)) {
                 $status = $apt['AppointmentStatus'];
                 $btnVis = "none";
@@ -101,13 +113,13 @@ $count = mysqli_num_rows($result);
                     $statusUpdate = "Ongoing";
                     $statusColor = "rgb(255, 255, 185);";
                     $btnVis = "block";
-                } else if($status == "completed") {
-                    $statusUpdate = "<a href='donationHistory.php' style='text-decoration:none'>Completed</a>";
+                } else if ($status == "completed") {
+                    $statusUpdate = "<a href='donationHistory.php' target='_blank'>Completed</a>";
                     $statusColor = "#91f086";
-                } else if($status == "cancelled") {
+                } else if ($status == "cancelled") {
                     $statusUpdate = "Cancelled";
                     $statusColor = "lightsalmon";
-                } else if($status == "rejected"){
+                } else if ($status == "rejected") {
                     $statusUpdate = "Rejected";
                     $statusColor = "lightsalmon";
                 }
@@ -118,9 +130,12 @@ $count = mysqli_num_rows($result);
                 <div id='apt$apt[AppointmentID]' class='apt container rounded w3-round-large my-3' style='background-color:$statusColor;'>
                     <div class='row'>
                         <h4 class='col-11'>AppointmentID #$apt[AppointmentID]</h4> 
-                        <div class='col' id='btn$i' style='display:"?><?php echo $btnVis;?><?php
-                echo "'>
-                            <button type='button' class='cancelBtn col btn btn-danger' title='Cancel Appointment'><i class='fa-solid fa-times'></i></button>
+                        <div class='col' id='btn$i' style='display:" ?><?php echo $btnVis; ?><?php
+                                                                                                echo "'>
+                            <form method='POST'><input type='hidden' name='aptID' value='$apt[AppointmentID]'>
+                            <button type='submit' class='cancelBtn col btn btn-danger' name='cancelBtn' title='Cancel Appointment'
+                            onclick='confirm(\"Are you sure you want to cancel?\");'><i class='fa-solid fa-times'></i></button>
+                            </form>    
                         </div>
                     </div>       
                     <p class='mb-2'><i class='fas fa-bell' style='margin-right:2%;'></i>$statusUpdate</p>
@@ -134,7 +149,7 @@ $count = mysqli_num_rows($result);
                 $i++;
             }
         } ?>
-    </div>
+</div>
     </div>
 </body>
 

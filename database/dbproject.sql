@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 26, 2022 at 05:22 PM
+-- Generation Time: Jun 26, 2022 at 06:59 PM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -36,6 +36,14 @@ CREATE TABLE `appointment` (
   `CentreID` int(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `appointment`
+--
+
+INSERT INTO `appointment` (`AppointmentID`, `DonorID`, `AppointedDate`, `AppointedSession`, `AppointmentStatus`, `CentreID`) VALUES
+(1, 3, '2022-06-26', '08:00:00', 'completed', 1),
+(2, 3, '2022-08-26', '09:00:00', 'cancelled', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -48,6 +56,13 @@ CREATE TABLE `blood` (
   `HaemoglobinLevel` double DEFAULT NULL,
   `DonorID` int(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `blood`
+--
+
+INSERT INTO `blood` (`BloodID`, `BloodGroup`, `HaemoglobinLevel`, `DonorID`) VALUES
+(1, 'A+', 13, 3);
 
 -- --------------------------------------------------------
 
@@ -86,6 +101,13 @@ CREATE TABLE `blooddonation` (
   `StaffID` int(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `blooddonation`
+--
+
+INSERT INTO `blooddonation` (`DonationID`, `BloodID`, `AppointmentID`, `DonationAmount`, `DonationType`, `StaffID`) VALUES
+(1, 1, 1, 380, 'w', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -96,6 +118,13 @@ CREATE TABLE `bloodstock` (
   `DonationID` int(5) NOT NULL,
   `CentreID` int(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `bloodstock`
+--
+
+INSERT INTO `bloodstock` (`DonationID`, `CentreID`) VALUES
+(1, 1);
 
 -- --------------------------------------------------------
 
@@ -138,6 +167,13 @@ CREATE TABLE `donationhistory` (
   `DonationID` int(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `donationhistory`
+--
+
+INSERT INTO `donationhistory` (`DonorID`, `DonationID`) VALUES
+(3, 1);
+
 -- --------------------------------------------------------
 
 --
@@ -152,6 +188,13 @@ CREATE TABLE `donor` (
   `IsAphresis` tinyint(1) NOT NULL DEFAULT 0,
   `LastDonationDate` date DEFAULT '1900-01-01'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `donor`
+--
+
+INSERT INTO `donor` (`UserID`, `Weight`, `Age`, `IsWhole`, `IsAphresis`, `LastDonationDate`) VALUES
+(3, 56, 22, 1, 0, '2022-06-26');
 
 -- --------------------------------------------------------
 
@@ -218,7 +261,8 @@ CREATE TABLE `user` (
 
 INSERT INTO `user` (`UserID`, `FirstName`, `LastName`, `Gender`, `Email`, `Password`, `UserType`) VALUES
 (1, 'Max', 'Chia', 'Male', '75590@siswa.unimas.my', '$2y$10$by9PuERUFxh5q69MeD0/LOXfGFidmXNQbx8VYszV/XBG6MXXiEpXm', 'staff'),
-(2, 'Jovian', 'Jayome', 'Male', '70019@siswa.unimas.my', '$2y$10$ZP5oZIQpxxUjnvOLepBhvegnphuCvQgV2dpxRRynGYkVD/Ytfv5WS', 'staff');
+(2, 'Jovian', 'Jayome', 'Male', '70019@siswa.unimas.my', '$2y$10$ZP5oZIQpxxUjnvOLepBhvegnphuCvQgV2dpxRRynGYkVD/Ytfv5WS', 'staff'),
+(3, 'Ming', 'Lee', 'Male', 'lee@gmail.com', '$2y$10$i7.b9lWQYHyz0k6fZMMjEug5eD28bH2EHWmqLIdvuP/YIxJVNE0Lu', 'donor');
 
 --
 -- Indexes for dumped tables
@@ -307,25 +351,25 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `appointment`
 --
 ALTER TABLE `appointment`
-  MODIFY `AppointmentID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `AppointmentID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `blood`
 --
 ALTER TABLE `blood`
-  MODIFY `BloodID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `BloodID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `blooddonation`
 --
 ALTER TABLE `blooddonation`
-  MODIFY `DonationID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `DonationID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `UserID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `UserID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
