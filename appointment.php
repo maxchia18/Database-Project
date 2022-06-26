@@ -102,7 +102,7 @@ $count = mysqli_num_rows($result);
                     $statusColor = "rgb(255, 255, 185);";
                     $btnVis = "block";
                 } else if($status == "completed") {
-                    $statusUpdate = "Completed";
+                    $statusUpdate = "<a href='donationHistory.php' style='text-decoration:none'>Completed</a>";
                     $statusColor = "#91f086";
                 } else if($status == "cancelled") {
                     $statusUpdate = "Cancelled";
@@ -115,7 +115,7 @@ $count = mysqli_num_rows($result);
                 $nameResult = mysqli_query($conn, $getName);
                 $nameRow = mysqli_fetch_assoc($nameResult);
                 echo "
-                <div id='apt$i' class='apt container rounded w3-round-large my-3' style='background-color:$statusColor;'>
+                <div id='apt$apt[AppointmentID]' class='apt container rounded w3-round-large my-3' style='background-color:$statusColor;'>
                     <div class='row'>
                         <h4 class='col-11'>AppointmentID #$apt[AppointmentID]</h4> 
                         <div class='col' id='btn$i' style='display:"?><?php echo $btnVis;?><?php
@@ -134,9 +134,6 @@ $count = mysqli_num_rows($result);
                 $i++;
             }
         } ?>
-        <!-- <div class='w3-quarter'>
-                            <p style='text-align:right;font-size:large;'><i class='fa-solid fa-pen-to-square' style='color:green;'></i></p>
-                        </div> -->
     </div>
     </div>
 </body>

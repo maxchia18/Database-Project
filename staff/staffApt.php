@@ -55,7 +55,7 @@ include "completeApt.php";
                     <td>$apt[AppointedDate]</td>
                     <td>$apt[AppointedSession]</td>
                     <td>$centreName</td>
-                    <td><button type='button' id='completeApt' class='actionBtn btn btn-info border w3-round-xlarge' name='completeApt' data-bs-toggle='modal' data-bs-target='#completeDonation'>	
+                    <td><button type='button' class='completeApt actionBtn btn btn-info border w3-round-xlarge' name='completeApt' data-bs-toggle='modal' data-bs-target='#completeDonation'>	
                     <i class='fa fa-check'></i></button></td>
                 </tr>";
                 } ?>
@@ -206,7 +206,7 @@ include "completeApt.php";
         }
 
         $(document).ready(function() {
-            $('#completeApt').on('click', function() {
+            $('.completeApt').on('click', function() {
                 //retrieve data from table
                 $tr = $(this).closest('tr');
                 var data = $tr.children("td").map(function() {

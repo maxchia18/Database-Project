@@ -61,18 +61,19 @@ function redirectHome($userType)
         }
 
         .navbar-brand {
-            margin-left: 2.5%;
+            margin-left: 2%;
             font-size: 3.5vh !important;
             font-weight: bold;
         }
     </style>
+    
 </head>
 
 <body>
-    <header>
+    <header class='shadow-sm'>
         <nav class="navbar navbar-expand-lg navbar-light">
             <div class="container-fluid">
-                <a href="index.php"><img src="img/logo.png" width="40" height="40"></a>
+                <a href="index.php" style="text-decoration:none;"><img src="img/logo.png" width="40" height="40">Home</a>
                 <a class="navbar-brand" href="index.php" style="color:#ff7169;">Blood Donation</a>
                 <?php if (isset($_SESSION['UserID'])) {
                     $logout = "\"logout.php\"";
@@ -85,32 +86,6 @@ function redirectHome($userType)
         </nav>
     </header>
 
-    <!-- sorttable -->
-    <script>
-        $('th').click(function() {
-            var table = $(this).parents('table').eq(0)
-            var rows = table.find('tr:gt(0)').toArray().sort(comparer($(this).index()))
-            this.asc = !this.asc
-            if (!this.asc) {
-                rows = rows.reverse()
-            }
-            for (var i = 0; i < rows.length; i++) {
-                table.append(rows[i])
-            }
-        })
-
-        function comparer(index) {
-            return function(a, b) {
-                var valA = getCellValue(a, index),
-                    valB = getCellValue(b, index)
-                return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
-            }
-        }
-
-        function getCellValue(row, index) {
-            return $(row).children('td').eq(index).text()
-        }
-    </script>
 </body>
 
 </html>

@@ -2,9 +2,9 @@
 include "header.php";
 
 //choose Date and Session first, then only show available place
-
-$bloodbank = "SELECT * FROM DonationCentre WHERE CentreType = 'B'";
-$mobile = "SELECT DonationCentre.*, MobileCentre.StartDate, MobileCentre.EndDate FROM DonationCentre 
+$bloodbank = "SELECT DonationCentre.*, BloodBankCentre.* FROM DonationCentre
+              INNER JOIN BloodBankCentre ON DonationCentre.CentreID = BloodBankCentre.CentreID";
+$mobile = "SELECT DonationCentre.*, MobileCentre.* FROM DonationCentre 
            INNER JOIN MobileCentre ON DonationCentre.CentreID = MobileCentre.CentreID";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -38,6 +38,7 @@ $message = "";
 if ($row == 0) {
     $hasApt = "none";
     $noApt = "block";
+    $minDate = date("Y-m-d");
 } else {
     $status = $AppointmentStatus['AppointmentStatus'];
     if ($status == "ongoing") {
@@ -52,7 +53,6 @@ if ($row == 0) {
 
         $lastDate = $AppointmentStatus['AppointedDate'];
         $datetime = new DateTime($lastDate);
-
         if ($status == "completed") {
             $msgVis = "block";
             if ($getDonation['DonationType'] == 'w') {
@@ -103,6 +103,7 @@ if ($row == 0) {
         .main {
             margin-left: 20%;
             height: 92vh;
+            overflow-y: auto;
         }
 
         #hasApt {
@@ -156,14 +157,14 @@ if ($row == 0) {
     <div class="main w3-padding-large">
         <form id="aptForm" method="POST">
             <h1 class="mb-4">New Appointment</h1>
-            <div class="container shadow rounded w3-padding border" id='form'>
+            <div class="container shadow-sm rounded border w3-padding" id='form'>
                 <h3 class='w3-center' id='hasApt'>We appreciate your kindness, but you have an ongoing
                     <a href='appointment.php'>appointment</a> to attend.
                 </h3>
                 <div style="display:<?php echo $msgVis ?>;">
-                    <h3><?php echo $message ?>
+                    <h4><?php echo $message ?>
                         <hr>
-                    </h3>
+                    </h4>
                 </div>
                 <div class="row">
                     <div class="form-group mb-3 col">
@@ -213,11 +214,87 @@ if ($row == 0) {
                         </optgroup>
                     </select>
                 </div>
-                <div class="form-group mb-3">
-                    <button type="submit" id="signUp" name="signUp" class="btn btn-primary btn-block" onclick="return  confirm('Are you sure?')">Done</button>
+                <div class="form-group mb-2">
+                    <button type="submit" id="appoint" name="appoint" class="btn btn-primary btn-block" onclick="return  confirm('Are you sure?')">Done</button>
                 </div>
             </div>
         </form>
+        
+<hr style="margin-top:5vh;">
+
+        <div class="row">
+            <h1 class="mb-4 col-10">Centre Details</h1>
+        </div>
+        <div class="container shadow rounded border w3-padding" id='centreDetails'>
+            <div class='row'>
+                <h3 class='col'>Blood Bank</h3>
+                <input type='text' id='bFilter' class='col form-check-input px-1 py-3 rounded' placeholder='Search...'>
+            </div>
+            <table class="table table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Centre</th>
+                        <th scope="col">Address</th>
+                        <th scope="col">Tel No.</th>
+                        <th scope="col">Tel Fax</th>
+                    </tr>
+                </thead>
+                <tbody id='bTable'>
+                    <?php
+                    $result = mysqli_query($conn, $bloodbank);
+                    $index = 1;
+                    while ($getCentre = mysqli_fetch_assoc($result)) {
+                        echo "
+                <tr>
+                    <td scope='row'>$index</td>
+                    <td>$getCentre[CentreName]</td>
+                    <td class='col-5'>$getCentre[CentreAddress]</td>
+                    <td>$getCentre[TelNo]</td>
+                    <td>$getCentre[TelFax]</td>
+                </tr>";
+                        $index++;
+                    }
+                    ?>
+                </tbody>
+            </table>
+            <div class='row'>
+                <h3 class='col'>Mobile Centre</h3>
+                <input type='text' id='mFilter' class='col form-check-input px-1 py-3 rounded' placeholder='Search...'>
+            </div>
+            <table class="table table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Centre</th>
+                        <th>Address</th>
+                        <th>Organizer</th>
+                        <th>Tel No.</th>
+                        <th>Start</th>
+                        <th>End</th>
+                    </tr>
+                </thead>
+                <tbody id='mTable'>
+                    <?php
+                    $result = mysqli_query($conn, $mobile);
+                    $index = 1;
+                    while ($getCentre = mysqli_fetch_assoc($result)) {
+                        echo "
+                <tr>
+                    <td scope='row'>$index</td>
+                    <td class='col-2'>$getCentre[CentreName]</td>
+                    <td class='col-3'>$getCentre[CentreAddress]</td>
+                    <td class='col-2'>$getCentre[OrganizerName]</td>
+                    <td>$getCentre[TelNo]</td>
+                    <td>$getCentre[StartDate]</td>
+                    <td>$getCentre[EndDate]</td>
+                </tr>";
+                        $index++;
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script>
@@ -244,10 +321,11 @@ if ($row == 0) {
             }
         }
 
-        function setMaxDate(passedvalue) {
+        function setMaxDate(centreValue) {
             const date = document.getElementById("date");
-            let text = passedvalue.split(",");
+            let text = centreValue.split(",");
 
+            centreID = text[0];
             startDate = text[1];
             endDate = text[2];
             date.disabled = false;
@@ -255,11 +333,58 @@ if ($row == 0) {
             date.min = startDate;
             date.max = endDate;
 
+            //bloodbank
             if (startDate == undefined) {
                 date.min = "<?php echo $minDate ?>";
                 date.value = "<?php echo $minDate ?>";
             }
         }
+    </script>
+
+    <!-- sorttable -->
+    <script>
+        $('th').click(function() {
+            var table = $(this).parents('table').eq(0)
+            var rows = table.find('tr:gt(0)').toArray().sort(comparer($(this).index()))
+            this.asc = !this.asc
+            if (!this.asc) {
+                rows = rows.reverse()
+            }
+            for (var i = 0; i < rows.length; i++) {
+                table.append(rows[i])
+            }
+        })
+
+        function comparer(index) {
+            return function(a, b) {
+                var valA = getCellValue(a, index),
+                    valB = getCellValue(b, index)
+                return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
+            }
+        }
+
+        function getCellValue(row, index) {
+            return $(row).children('td').eq(index).text()
+        }
+    </script>
+
+    <!--search table-->
+    <script>
+        $(document).ready(function() {
+            $("#bFilter").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#bTable tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+
+            $("#mFilter").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $("#mTable tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
     </script>
 </body>
 
