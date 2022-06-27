@@ -22,10 +22,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $datetime = new DateTime($appointedDate);
         $datetime->modify('-6 months');
         $_6months = $datetime->format('Y-m-d');
+        $compLastDate = new DateTime($lastDate);
     }
 
+
     if (isset($_POST['complete'])) {
-        //update data
+        // update data
         $updateApt = "UPDATE Appointment SET AppointmentStatus = 'completed' WHERE AppointmentID = $aptID";
         $updateBloodResult = mysqli_query($conn, $updateApt);
 
@@ -33,8 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $checkEligible = "SELECT COUNT(*) AS 'total' FROM Appointment WHERE DonorID = $donorID AND Appointment.AppointmentStatus = 'completed'";
         $checkResult = mysqli_query($conn, $checkEligible);
         $checkEligible = mysqli_fetch_assoc($checkResult);
-
-        if ($weight > 55 && $checkEligible['total'] > 1 && $lastDate < $_6months && $getData['Age'] < 55) {
+        if ($weight > 55 && $checkEligible['total'] > 1 && $lastDate > $_6months && $getData['Age'] <= 55) {
             $updateDonor = "UPDATE Donor SET IsAphresis = 1, Weight = '$weight',LastDonationDate = '$appointedDate' WHERE UserID = $donorID";
             $updateDonorResult = mysqli_query($conn, $updateDonor);
         } else {
@@ -69,7 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $updateApt = "UPDATE Appointment SET AppointmentStatus = 'rejected' WHERE AppointmentID = $aptID";
         $updateBloodResult = mysqli_query($conn, $updateApt);
 
-        $updateDonor = "UPDATE Donor SET IsAphresis = 0, Weight = '$weight' WHERE UserID = $donorID";
+        $updateDonor = "UPDATE Donor SET Weight = '$weight' WHERE UserID = $donorID";
         $updateDonorResult = mysqli_query($conn, $updateDonor);
 
         $updateBlood = "UPDATE Blood SET BloodGroup = '$bloodgroup', HaemoglobinLevel = '$haemo' WHERE DonorID = $donorID";

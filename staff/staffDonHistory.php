@@ -1,13 +1,18 @@
 <?php
+include "staffHeader.php";
 $getDonation = "SELECT BloodDonation.*,Appointment.* FROM Appointment 
                 INNER JOIN BloodDonation ON Appointment.AppointmentID = BloodDonation.AppointmentID
                 WHERE CentreID = $centreID AND AppointmentStatus = 'completed' ORDER BY AppointedDate,AppointedSession";
 $getDonationResult = mysqli_query($conn, $getDonation);
 
-$getYear = "SELECT DISTINCT YEAR(AppointedDate) as 'year' FROM Appointment WHERE CentreID = $centreID";
+$getYear = "SELECT DISTINCT YEAR(Appointment.AppointedDate) as 'year' FROM Appointment
+            INNER JOIN BloodDonation ON Appointment.AppointmentID = BloodDonation.AppointmentID
+            WHERE CentreID = $centreID";
 $getYearResult = mysqli_query($conn, $getYear);
 
-$getMonth = "SELECT DISTINCT MONTH(AppointedDate) as 'month' FROM Appointment WHERE CentreID = $centreID ORDER BY AppointedDate";
+$getMonth = "SELECT DISTINCT MONTH(AppointedDate) as 'month' FROM Appointment
+            INNER JOIN BloodDonation ON Appointment.AppointmentID = BloodDonation.AppointmentID
+            WHERE CentreID = $centreID";
 $getMonthResult = mysqli_query($conn, $getMonth);
 ?>
 
@@ -16,6 +21,19 @@ $getMonthResult = mysqli_query($conn, $getMonth);
 <html>
 
 <body>
+    <?php
+    $getAppointment = "SELECT * FROM Appointment WHERE CentreID = $centreID AND AppointmentStatus = 'ongoing' ORDER BY AppointedDate,AppointedSession";
+    $getAptResult = mysqli_query($conn, $getAppointment);
+    $aptCount = mysqli_num_rows($getAptResult); ?>
+
+    <ul class="nav nav-tabs nav-justified mb-3">
+        <li class="nav-item"><a class="nav-link" href='staffApt.php'>Appointment<span class="count"><?php echo $aptCount; ?></span></a></li>
+        <li class="nav-item"><a class="nav-link active"  aria-current="page" href="staffDonHistory.php">Donation Records</a></li>
+        <li class="nav-item"><a class="nav-link" href="staffBloodStock.php">Blood Stock</a></li>
+        <li class="nav-item"><a class="nav-link" href="donorData.php">Donor</a></li>
+        <li class="nav-item"><a class="nav-link" href="staffData.php">Staff</a></li>
+    </ul>
+
     <div class="content container border w3-round-large pt-2" style="height:80vh;overflow:auto;">
         <div class="row">
             <h3 class="col-8">Donation Record<span class="index"># ➜ Donation ID</h3>
@@ -114,6 +132,33 @@ $getMonthResult = mysqli_query($conn, $getMonth);
                     }
                 });
             }
+        }
+    </script>
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- sorttable -->
+    <script>
+        $('th').click(function() {
+            var table = $(this).parents('table').eq(0)
+            var rows = table.find('tr:gt(0)').toArray().sort(comparer($(this).index()))
+            this.asc = !this.asc
+            if (!this.asc) {
+                rows = rows.reverse()
+            }
+            for (var i = 0; i < rows.length; i++) {
+                table.append(rows[i])
+            }
+        })
+
+        function comparer(index) {
+            return function(a, b) {
+                var valA = getCellValue(a, index),
+                    valB = getCellValue(b, index)
+                return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
+            }
+        }
+
+        function getCellValue(row, index) {
+            return $(row).children('td').eq(index).text()
         }
     </script>
 </body>

@@ -4,7 +4,7 @@ include "header.php";
 $getHistory = "SELECT BloodDonation.*,Appointment.* FROM Appointment 
                INNER JOIN BloodDonation ON Appointment.AppointmentID = BloodDonation.AppointmentID
                WHERE AppointmentStatus = 'completed' AND Appointment.DonorID = $userID 
-               ORDER BY BloodDonation.DonationID";
+               ORDER BY BloodDonation.DonationID DESC";
 $getHistoryResult = mysqli_query($conn, $getHistory);
 $count = mysqli_num_rows($getHistoryResult);
 

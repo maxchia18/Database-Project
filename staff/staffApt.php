@@ -1,6 +1,10 @@
 <?php
+include "staffHeader.php";
 include "completeApt.php";
 
+$getAppointment = "SELECT * FROM Appointment WHERE CentreID = $centreID AND AppointmentStatus = 'ongoing' ORDER BY AppointedDate,AppointedSession";
+$getAptResult = mysqli_query($conn, $getAppointment);
+$aptCount = mysqli_num_rows($getAptResult);
 ?>
 
 <!DOCTYPE html>
@@ -13,6 +17,10 @@ include "completeApt.php";
             display: none;
             color: red !important;
         }
+
+        #aptHistory {
+            display: none;
+        }
     </style>
 
     <script>
@@ -21,32 +29,47 @@ include "completeApt.php";
 </head>
 
 <body>
-    <div class="content container border w3-round-large" style="height:80vh;overflow:auto;">
-        <h3>New Appointment<span class="index"># ➜ Appointment ID</h3>
+    <?php
+    $getAppointment = "SELECT * FROM Appointment WHERE CentreID = $centreID AND AppointmentStatus = 'ongoing' ORDER BY AppointedDate,AppointedSession";
+    $getAptResult = mysqli_query($conn, $getAppointment);
+    $aptCount = mysqli_num_rows($getAptResult); ?>
+    <ul class="nav nav-tabs nav-justified mb-3">
+        <li class="nav-item"><a class="nav-link active" aria-current="page" href='staffApt.php'>Appointment<span class="count"><?php echo $aptCount; ?></span></a></li>
+        <li class="nav-item"><a class="nav-link" href="staffDonHistory.php">Donation Records</a></li>
+        <li class="nav-item"><a class="nav-link" href="staffBloodStock.php">Blood Stock</a></li>
+        <li class="nav-item"><a class="nav-link" href="donorData.php">Donor</a></li>
+        <li class="nav-item"><a class="nav-link" href="staffData.php">Staff</a></li>
+    </ul>
 
-        <table class="table table-hover table-striped">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th style="display:none;">iswhole</th>
-                    <th style="display:none;">isaphresis</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Gender</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Session</th>
-                    <th scope="col">Centre</th>
-                    <th scope="col">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                while ($apt = mysqli_fetch_assoc($getAptResult)) {
-                    $getDonor = "SELECT User.*,Donor.* 
+    <div class="content container border w3-round-large" style="height:80vh;overflow:auto;">
+        <div id="newApt" class="w3-padding">
+            <div class='row'>
+                <h3 class='col-11'>New Appointment<span class="index"># ➜ Appointment ID</h3>
+                <button type='button' class='btn btn-primary col' id='new' onclick='toggleApt(this.id);'>History</button>
+            </div>
+            <table class="table table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th style="display:none;">iswhole</th>
+                        <th style="display:none;">isaphresis</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Gender</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Session</th>
+                        <th scope="col">Centre</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    while ($apt = mysqli_fetch_assoc($getAptResult)) {
+                        $getDonor = "SELECT User.*,Donor.* 
                                 FROM User INNER JOIN Donor ON User.UserID = Donor.UserID
                                 WHERE Donor.UserID = $apt[DonorID]";
-                    $getDonorResult = mysqli_query($conn, $getDonor);
-                    $donorData = mysqli_fetch_assoc($getDonorResult);
-                    echo "<tr>
+                        $getDonorResult = mysqli_query($conn, $getDonor);
+                        $donorData = mysqli_fetch_assoc($getDonorResult);
+                        echo "<tr>
                     <td scope='row'><b>$apt[AppointmentID]</b></td>
                     <td style='display:none;'>$donorData[IsWhole]</th>
                     <td style='display:none;'>$donorData[IsAphresis]</th>
@@ -58,40 +81,44 @@ include "completeApt.php";
                     <td><button type='button' class='completeApt btn btn-info border w3-round-xlarge' name='completeApt' data-bs-toggle='modal' data-bs-target='#completeDonation'>	
                     <i class='fa fa-check'></i></button></td>
                 </tr>";
-                } ?>
-            </tbody>
-        </table>
-        <?php
-        if (mysqli_num_rows($getAptResult) == 0) {
-            echo "<h2 class='w3-center mt-5'>No new appointment, check back later.</h2>";
-        } ?>
-        <hr>
-        <h3>Appointment History<span class="index"># ➜ Appointment ID</h3>
+                    } ?>
+                </tbody>
+            </table>
+            <?php
+            if (mysqli_num_rows($getAptResult) == 0) {
+                echo "<h2 class='w3-center mt-5'>No new appointment, check back later.</h2>";
+            } ?>
+        </div>
 
-        <table class="table table-hover table-striped">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Gender</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Session</th>
-                    <th scope="col">Centre</th>
-                    <th scope="col">Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                $getAppointment = "SELECT * FROM Appointment WHERE CentreID = $centreID AND AppointmentStatus != 'ongoing' ORDER BY AppointedDate,AppointedSession";
-                $getAptResult = mysqli_query($conn, $getAppointment);
-                while ($apt = mysqli_fetch_assoc($getAptResult)) {
-                    $getDonor = "SELECT User.*,Donor.* 
+        <div id="aptHistory" class="w3-padding">
+            <div class='row'>
+                <h3 class='col-10'>Appointment History<span class="index"># ➜ Appointment ID</h3>
+                <button type='button' class='btn btn-primary col' id='history' onclick='toggleApt(this.id);'>New Appointment</button>
+            </div>
+            <table class="table table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Gender</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Session</th>
+                        <th scope="col">Centre</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    $getAppointment = "SELECT * FROM Appointment WHERE CentreID = $centreID AND AppointmentStatus != 'ongoing' ORDER BY AppointedDate,AppointedSession";
+                    $getAptResult = mysqli_query($conn, $getAppointment);
+                    while ($apt = mysqli_fetch_assoc($getAptResult)) {
+                        $getDonor = "SELECT User.*,Donor.* 
                                 FROM User INNER JOIN Donor ON User.UserID = Donor.UserID
                                 WHERE Donor.UserID = $apt[DonorID]";
-                    $getDonorResult = mysqli_query($conn, $getDonor);
-                    $donorData = mysqli_fetch_assoc($getDonorResult);
-                    $aptStatus = ucfirst($apt['AppointmentStatus']);
-                    echo "<tr>
+                        $getDonorResult = mysqli_query($conn, $getDonor);
+                        $donorData = mysqli_fetch_assoc($getDonorResult);
+                        $aptStatus = ucfirst($apt['AppointmentStatus']);
+                        echo "<tr>
                         <td scope='row'><b>$apt[AppointmentID]</b></td>
                         <td>$donorData[FirstName] $donorData[LastName]</td>
                         <td>$donorData[Gender]</td>
@@ -100,10 +127,18 @@ include "completeApt.php";
                         <td>$centreName</td>
                         <td>$aptStatus<td>
                     </tr>";
-                } ?>
-            </tbody>
-        </table>
+                    } ?>
+                </tbody>
+            </table>
+            <?php
+            if (mysqli_num_rows($getAptResult) == 0) {
+                echo "<h2 class='w3-center mt-5'>No appointment is made yet, check back later.</h2>";
+            } ?>
+        </div>
     </div>
+
+
+
 
     <!-- Modal -->
     <div class="modal fade" id="completeDonation" tabindex="-1" aria-labelledby="completeDonationLabel" aria-hidden="true">
@@ -140,13 +175,13 @@ include "completeApt.php";
                             <div class="col">
                                 <div class="form-group mb-3">
                                     <label class="form-label" for="haemo">Haemoglobin Level (gm/dL)</label>
-                                    <input type="number" min="0" step="0.1" class="form-control" id="haemo" name="haemo" placeholder="Haemoglobin Level" onchange="checkHaemo(this.value);" required />
+                                    <input type="number" min="0" step="0.1" class="form-control" id="haemo" name="haemo" placeholder="Haemoglobin Level" onkeyup="checkHaemo(this.value);" required />
                                 </div>
                             </div>
                         </div>
                         <div class="form-group mb-3">
                             <label class="form-label" for="weight">Weight (kg)</label>
-                            <input type="number" min="0" step="0.1" class="form-control" id="weight" name="weight" placeholder="Weight" onchange="checkWeight(this.value);" required />
+                            <input type="number" min="0" step="0.1" class="form-control" id="weight" name="weight" placeholder="Weight" onkeyup="checkWeight(this.value);" required />
                         </div>
                         <div class="form-group mb-3" id="type">
                             <label class="form-label" for="donationType">Donation Type</label></br>
@@ -170,13 +205,26 @@ include "completeApt.php";
                         </div>
                     </form>
                 </div>
-
             </div>
         </div>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
+        function toggleApt(id) {
+            let newApt = document.getElementById('newApt');
+            let historyApt = document.getElementById('aptHistory');
+
+            if (id == 'new') {
+                newApt.style.display = "none";
+                historyApt.style.display = "block";
+            } else {
+                newApt.style.display = "block";
+                historyApt.style.display = "none";
+            }
+
+        }
+
         function setEditable(x) {
             let completeBtn = document.getElementById('complete');
             let amount = document.getElementById('amount');

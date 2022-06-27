@@ -12,6 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         $updateCancel = "UPDATE Appointment SET AppointmentStatus = 'cancelled' WHERE AppointmentID = $aptID";
         if($cancelResult = mysqli_query($conn,$updateCancel)){
             echo "<script>alert('Cancelled successfully!');</script>";
+            echo "<meta http-equiv='refresh' content='0'>";
         }
     }
 }
@@ -72,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         .apt {
             padding: 1%;
             padding-bottom: 0;
-            box-shadow: 10px 10px lightblue;
+            box-shadow: 10px 10px lightpink;
             background-color: gold;
         }
     </style>
@@ -115,7 +116,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                     $btnVis = "block";
                 } else if ($status == "completed") {
                     $statusUpdate = "<a href='donationHistory.php' target='_blank'>Completed</a>";
-                    $statusColor = "#91f086";
+                    $statusColor = "lightblue";
                 } else if ($status == "cancelled") {
                     $statusUpdate = "Cancelled";
                     $statusColor = "lightsalmon";
@@ -134,7 +135,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                                                                                                 echo "'>
                             <form method='POST'><input type='hidden' name='aptID' value='$apt[AppointmentID]'>
                             <button type='submit' class='cancelBtn col btn btn-danger' name='cancelBtn' title='Cancel Appointment'
-                            onclick='confirm(\"Are you sure you want to cancel?\");'><i class='fa-solid fa-times'></i></button>
+                            onclick='return confirm(\"Are you sure you want to cancel?\");'><i class='fa-solid fa-times'></i></button>
                             </form>    
                         </div>
                     </div>       

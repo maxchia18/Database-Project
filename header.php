@@ -6,7 +6,7 @@ date_default_timezone_set("Asia/Kuala_Lumpur");
 include "dbConnection.php";
 
 if ($userType == 'staff') {
-    header('Location: staff/staffHeader.php');
+    header('Location: staff/staffApt.php');
     ob_end_flush();
     exit();
 }
@@ -15,7 +15,7 @@ if ($userType == 'staff') {
 function redirectHome($userType)
 {
     if ($userType == 'staff') {
-        header('Location: staff/staffHeader.php');
+        header('Location: staff/staffApt.php');
         ob_end_flush();
         exit();
     }

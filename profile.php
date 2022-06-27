@@ -8,11 +8,6 @@ $getDonor = "SELECT User.*, Donor.*,Blood.BloodGroup FROM User
 $getDonorResult = mysqli_query($conn, $getDonor);
 $getDonor = mysqli_fetch_assoc($getDonorResult);
 
-if ($getDonor['Gender'] == 'M') {
-    $gender = "Male";
-} else {
-    $gender = "Female";
-}
 ?>
 
 <!DOCTYPE html>
@@ -69,6 +64,39 @@ if ($getDonor['Gender'] == 'M') {
         #msg {
             color: red;
         }
+
+        #aptCount {
+            background-color: #ffa178;
+            transition: 1s;
+        }
+
+        #donationCount {
+            background-color: rgb(250, 250, 140);
+            transition: 1s;
+        }
+
+        #aptCount:hover {
+            background-color: #ff7169;
+            transition: 1s;
+            cursor: pointer;
+        }
+
+        #donationCount:hover {
+            background-color: gold;
+            transition: 1s;
+            cursor: pointer;
+        }
+
+        .count:hover {
+            cursor: pointer;
+        }
+
+        .spanCount {
+            margin-left: 60%;
+            border-radius: 50%;
+            height: auto;
+            padding: 0% 1%;
+        }
     </style>
 </head>
 
@@ -79,7 +107,7 @@ if ($getDonor['Gender'] == 'M') {
         </div>
         <div class='bg' id='bg1'>
             <a id="link2" class='alink' href="#">My Profile
-                <i class="fa fa-user" style="margin-left:14.3%;"></i></a>
+                <i class="fa fa-user" style="margin-left:20%;"></i></a>
             </a>
         </div>
     </div>
@@ -101,7 +129,7 @@ if ($getDonor['Gender'] == 'M') {
                 <div class="form-group row mt-3">
                     <div class="form-group col">
                         <label class="form-label" for="weight">Weight</label>
-                        <input type="number" class="form-control" id="weight" name="weight">
+                        <input type="text" class="form-control" id="weight" name="weight">
                     </div>
                     <div class="form-group col">
                         <label class="form-label" for="age">Age</label>
@@ -129,19 +157,43 @@ if ($getDonor['Gender'] == 'M') {
             </form>
         </div>
 
-        <script>
-            $("#profile :input:not(button)").prop("readOnly", true);
+        <?php
+        $getCount = "SELECT COUNT(Appointment.AppointmentID) as 'aptCount'
+            FROM Appointment WHERE Appointment.DonorID = $userID";
+        $getCountResult = mysqli_query($conn, $getCount);
+        $getCount = mysqli_fetch_assoc($getCountResult);
+        ?>
+        <h1 class="mb-2">You have made</h1>
+        <div class="row w3-padding">
+            <div class="container rounded border col count p-2" id="aptCount" onclick="window.location.href='appointment.php';">
+                <h3>Appointment<span class="spanCount"><?php echo $getCount["aptCount"]; ?></span></h3>
+            </div>
+        <?php
+        $getCount = "SELECT COUNT(BloodDonation.DonationID) as 'donCount'
+            FROM Appointment INNER JOIN BloodDonation 
+            ON Appointment.AppointmentID = BloodDonation.AppointmentID WHERE Appointment.DonorID = $userID";
+        $getCountResult = mysqli_query($conn, $getCount);
+        $getCount = mysqli_fetch_assoc($getCountResult);
+        ?>
+            <div class="container rounded border col count p-2" id="donationCount" onclick="window.location.href='donationHistory.php';">
+                <h3>Donation<span class="spanCount" style="margin-left:70%;"><?php echo $getCount["donCount"]; ?></span></h3>
+            </div>
+        </div>
+    </div>
 
-            $(document).ready(function() {
-                $('#fName').val('<?php echo $getDonor['FirstName']; ?>');
-                $('#lName').val('<?php echo $getDonor['LastName']; ?>');
-                $('#weight').val('<?php echo $getDonor['Weight']; ?>');
-                $('#age').val('<?php echo $getDonor['Age']; ?>')
-                $('#bloodGroup').val('<?php echo $getDonor['BloodGroup']; ?>');
-                $('#gender').val('<?php echo $gender; ?>');
-                $('#email').val('<?php echo $getDonor['Email']; ?>');
-            });
-        </script>
+    <script>
+        $("#profile :input:not(button)").prop("readOnly", true);
+
+        $(document).ready(function() {
+            $('#fName').val('<?php echo $getDonor['FirstName']; ?>');
+            $('#lName').val('<?php echo $getDonor['LastName']; ?>');
+            $('#weight').val('<?php echo $getDonor['Weight']; ?> kg');
+            $('#age').val('<?php echo $getDonor['Age']; ?>')
+            $('#bloodGroup').val('<?php echo $getDonor['BloodGroup']; ?>');
+            $('#gender').val('<?php echo $getDonor['Gender']; ?>');
+            $('#email').val('<?php echo $getDonor['Email']; ?>');
+        });
+    </script>
 </body>
 
 </html>

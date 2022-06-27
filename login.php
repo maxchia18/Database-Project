@@ -27,10 +27,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['UserID'] = $user['UserID'];
                 $_SESSION['UserName'] = $user['FirstName'] . " " . $user['LastName'];
 
-                echo $_SESSION['UserName'];
-                echo $_SESSION['UserType'];
-                echo $_SESSION['userID'];
-
                 if (isset($_SESSION['UserID'])) { ?>
                     <script>
                         window.location = "index.php";

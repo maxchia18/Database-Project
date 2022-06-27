@@ -1,5 +1,5 @@
 <?php
-
+include "staffHeader.php";
 $getStaff = "SELECT User.*, Staff.CentreID FROM User
              INNER JOIN Staff ON User.UserID = Staff.UserID";
 $result = mysqli_query($conn, $getStaff);
@@ -38,34 +38,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <script type="text/JavaScript">
                         alert("New staff added successful.");
                     </script><?php
-                    echo "<meta http-equiv='refresh' content='0'>";
-                } else {
-                    echo "Error: " . $sql . "<br>" . $conn->error;
+                                echo "<meta http-equiv='refresh' content='0'>";
+                            } else {
+                                echo "Error: " . $sql . "<br>" . $conn->error;
+                            }
+                        }
+                    } else {
+                        echo '<script type ="text/JavaScript">';
+                        echo 'alert("Email exists.")';
+                        echo '</script>';
+                    }
+                }
+
+                if (isset($_POST['removeBtn'])) {
+                    $staffID = $_POST['staffID'];
+
+                    $delSQL = "DELETE FROM User WHERE UserID = $staffID";
+                    if (mysqli_query($conn, $delSQL)) {
+                        echo "<script>alert('Staff #'+$staffID+' deleted.')</script>";
+                    } else {
+                        mysqli_error($conn);
+                    }
                 }
             }
-        } else {
-            echo '<script type ="text/JavaScript">';
-            echo 'alert("Email exists.")';
-            echo '</script>';
-        }
-    }
-
-    if(isset($_POST['removeBtn'])){
-        $staffID = $_POST['staffID'];
-
-        $delSQL = "DELETE FROM User WHERE UserID = $staffID";
-        if(mysqli_query($conn,$delSQL)){
-            echo "<script>alert('Staff #'+$staffID+' deleted.')</script>";
-        }else{
-            mysqli_error($conn);
-        }
-    }
-
-                // 70019@siswa.unimas.my
-}
-
-
-?>
+                                ?>
 
 <!DOCTYPE html>
 
@@ -82,6 +78,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body>
+    <?php
+    $getAppointment = "SELECT * FROM Appointment WHERE CentreID = $centreID AND AppointmentStatus = 'ongoing' ORDER BY AppointedDate,AppointedSession";
+    $getAptResult = mysqli_query($conn, $getAppointment);
+    $aptCount = mysqli_num_rows($getAptResult); ?>
+    <ul class="nav nav-tabs nav-justified mb-3">
+        <li class="nav-item"><a class="nav-link" href='staffApt.php'>Appointment<span class="count"><?php echo $aptCount; ?></span></a></li>
+        <li class="nav-item"><a class="nav-link" href="staffDonHistory.php">Donation Records</a></li>
+        <li class="nav-item"><a class="nav-link" href="staffBloodStock.php">Blood Stock</a></li>
+        <li class="nav-item"><a class="nav-link" href="donorData.php">Donor</a></li>
+        <li class="nav-item"><a class="nav-link active" aria-current="page" href="staffData.php">Staff</a></li>
+    </ul>
+
     <div class="content container border w3-round-large w3-padding" style="height:80vh;overflow:auto;">
         <div class="row">
             <h3 class="col-11">Staffs<span class="index"># ➜ Staff ID</h3>
@@ -225,7 +233,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <input type="number" step="1" class="form-control" id="staffID" name="staffID" placeholder="Enter Staff ID" required />
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" id="removeBtn" name="removeBtn" class="btn btn-danger" onclick="confirm('There is no going back after deleting!\nAre you sure?');">Remove</button>
+                            <button type="submit" id="removeBtn" name="removeBtn" class="btn btn-danger" onclick="return confirm('There is no going back after removing!\nAre you sure?');">Remove</button>
                         </div>
                     </form>
                 </div>
@@ -262,6 +270,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 return textBox.value;
             });
         });
+    </script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- sorttable -->
+    <script>
+        $('th').click(function() {
+            var table = $(this).parents('table').eq(0)
+            var rows = table.find('tr:gt(0)').toArray().sort(comparer($(this).index()))
+            this.asc = !this.asc
+            if (!this.asc) {
+                rows = rows.reverse()
+            }
+            for (var i = 0; i < rows.length; i++) {
+                table.append(rows[i])
+            }
+        })
+
+        function comparer(index) {
+            return function(a, b) {
+                var valA = getCellValue(a, index),
+                    valB = getCellValue(b, index)
+                return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
+            }
+        }
+
+        function getCellValue(row, index) {
+            return $(row).children('td').eq(index).text()
+        }
     </script>
 </body>
 

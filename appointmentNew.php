@@ -30,10 +30,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-$checkApt = "SELECT * FROM Appointment WHERE DonorID = $userID ORDER BY AppointmentID DESC LIMIT 1";
+$checkApt = "SELECT * FROM Appointment WHERE DonorID = $userID ORDER BY AppointmentID DESC";
 $checkResult = mysqli_query($conn, $checkApt);
 $row = mysqli_num_rows($checkResult);
 $AppointmentStatus = mysqli_fetch_assoc($checkResult);
+$status = $AppointmentStatus['AppointmentStatus'];
 $msgVis = "none";
 $message = "";
 
@@ -42,7 +43,6 @@ if ($row == 0) {
     $noApt = "block";
     $minDate = date("Y-m-d");
 } else {
-    $status = $AppointmentStatus['AppointmentStatus'];
     if ($status == "ongoing") {
         $hasApt = "block";
         $noApt = "none";
@@ -59,7 +59,11 @@ if ($row == 0) {
         $lastDate = $getLastDate['LastDonationDate'];
         $datetime = new DateTime($lastDate);
 
-        if ($status == "completed" || $status == "cancelled") {
+        if ($status == 'cancelled' && $row == 1) {
+            $hasApt = "none";
+            $noApt = "block";
+            $minDate = date("Y-m-d");
+        } else if (($status == "completed" || $status == "cancelled")) {
             $msgVis = "block";
             if ($status == "cancelled") {
                 $checkApt = "SELECT Appointment.*,BloodDonation.DonationType FROM Appointment
@@ -80,6 +84,10 @@ if ($row == 0) {
             }
         } else if ($status == "rejected") {
             $msgVis = "block";
+            $checkApt = "SELECT AppointedDate FROM Appointment WHERE DonorID = $userID ORDER BY AppointmentID DESC LIMIT 1";
+            $checkResult = mysqli_query($conn, $checkApt);
+            $getDonation = mysqli_fetch_assoc($checkResult);
+            $datetime = new DateTime($getDonation['AppointedDate']);
             $datetime->modify('+2 weeks');
             $minDate = $datetime->format('Y-m-d');
             $message = "Due to your health condition, you are advised to rest for 2 weeks (until $minDate) before making new appointment.";
@@ -149,6 +157,10 @@ if ($row == 0) {
         #bg2 {
             background-color: white;
             border-radius: 25px;
+        }
+
+        input[type='text'] {
+            background-color: rgb(240, 240, 240);
         }
     </style>
 </head>

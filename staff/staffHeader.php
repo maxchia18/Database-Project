@@ -16,6 +16,7 @@ $centreData = mysqli_fetch_assoc($getCentreResult);
 $centreName = $centreData['CentreName'];
 $staffName = explode(" ", $userName);
 
+
 if ($userType == "donor") {
     header("Location: ../index.php");
 }
@@ -121,68 +122,6 @@ if ($userType == "donor") {
         </nav>
     </header>
 
-<?php
-    $getAppointment = "SELECT * FROM Appointment WHERE CentreID = $centreID AND AppointmentStatus = 'ongoing' ORDER BY AppointedDate,AppointedSession";
-    $getAptResult = mysqli_query($conn, $getAppointment);
-    $aptCount = mysqli_num_rows($getAptResult);?>
-    <ul class="nav nav-tabs nav-justified my-1" id="myTab" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="appointment-tab" data-bs-toggle="tab" data-bs-target="#appointment" type="button" role="tab" aria-controls="appointment" aria-selected="true">
-                Appointment<span class="count"><?php echo $aptCount; ?></span>
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="donationRecord-tab" data-bs-toggle="tab" data-bs-target="#donationRecord" type="button" role="tab" aria-controls="donationRecord" aria-selected="false">Donation Record</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="bloodStock-tab" data-bs-toggle="tab" data-bs-target="#bloodStock" type="button" role="tab" aria-controls="bloodStock" aria-selected="false">Blood Stock</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="staff-tab" data-bs-toggle="tab" data-bs-target="#staff" type="button" role="tab" aria-controls="bloodStock" aria-selected="false">Staff</button>
-        </li>
-    </ul>
-    <div class="tab-content main" id="myTabContent">
-        <div class="tab-pane fade show active w3-padding" id="appointment" role="tabpanel" aria-labelledby="appointment-tab">
-            <?php include "staffApt.php"; ?>
-        </div>
-        <div class="tab-pane fade w3-padding" id="donationRecord" role="tabpanel" aria-labelledby="donationRecord-tab">
-            <?php include "staffDonHistory.php"; ?>
-        </div>
-        <div class="tab-pane fade w3-padding" id="bloodStock" role="tabpanel" aria-labelledby="bloodStock-tab">
-            <?php include "staffBloodStock.php"; ?>
-        </div>
-        <div class="tab-pane fade w3-padding" id="staff" role="tabpanel" aria-labelledby="staff-tab">
-            <?php include "staffData.php"; ?>
-        </div>
-    </div>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <!-- sorttable -->
-    <script>
-        $('th').click(function() {
-            var table = $(this).parents('table').eq(0)
-            var rows = table.find('tr:gt(0)').toArray().sort(comparer($(this).index()))
-            this.asc = !this.asc
-            if (!this.asc) {
-                rows = rows.reverse()
-            }
-            for (var i = 0; i < rows.length; i++) {
-                table.append(rows[i])
-            }
-        })
-
-        function comparer(index) {
-            return function(a, b) {
-                var valA = getCellValue(a, index),
-                    valB = getCellValue(b, index)
-                return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
-            }
-        }
-
-        function getCellValue(row, index) {
-            return $(row).children('td').eq(index).text()
-        }
-    </script>
 </body>
 
 </html>
