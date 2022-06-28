@@ -41,8 +41,8 @@ $aptCount = mysqli_num_rows($getAptResult);
         <li class="nav-item"><a class="nav-link" href="staffData.php">Staff</a></li>
     </ul>
 
-    <div class="content container border w3-round-large" style="height:80vh;overflow:auto;">
-        <div id="newApt" class="w3-padding">
+    <div class="content container border w3-round-large w3-padding" style="height:80vh;overflow:auto;">
+        <div id="newApt">
             <div class='row'>
                 <h3 class='col-11'>New Appointment<span class="index"># ➜ Appointment ID</h3>
                 <button type='button' class='btn btn-primary col' id='new' onclick='toggleApt(this.id);'>History</button>
@@ -90,7 +90,7 @@ $aptCount = mysqli_num_rows($getAptResult);
             } ?>
         </div>
 
-        <div id="aptHistory" class="w3-padding">
+        <div id="aptHistory">
             <div class='row'>
                 <h3 class='col-10'>Appointment History<span class="index"># ➜ Appointment ID</h3>
                 <button type='button' class='btn btn-primary col' id='history' onclick='toggleApt(this.id);'>New Appointment</button>
@@ -318,6 +318,33 @@ $aptCount = mysqli_num_rows($getAptResult);
                 }
             });
         });
+    </script>
+    
+     <!-- sorttable -->
+     <script>
+        $('th').click(function() {
+            var table = $(this).parents('table').eq(0)
+            var rows = table.find('tr:gt(0)').toArray().sort(comparer($(this).index()))
+            this.asc = !this.asc
+            if (!this.asc) {
+                rows = rows.reverse()
+            }
+            for (var i = 0; i < rows.length; i++) {
+                table.append(rows[i])
+            }
+        })
+
+        function comparer(index) {
+            return function(a, b) {
+                var valA = getCellValue(a, index),
+                    valB = getCellValue(b, index)
+                return $.isNumeric(valA) && $.isNumeric(valB) ? valA - valB : valA.toString().localeCompare(valB)
+            }
+        }
+
+        function getCellValue(row, index) {
+            return $(row).children('td').eq(index).text()
+        }
     </script>
 </body>
 

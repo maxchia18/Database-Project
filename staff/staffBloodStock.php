@@ -8,7 +8,8 @@ $getBlood = "SELECT COALESCE(SUM(BloodDonation.DonationAmount),0) as 'sum', Bloo
 $getBloodResult = mysqli_query($conn, $getBlood);
 
 $bloodGroup = array("A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-");
-$BloodArray = [];
+$bloodArray = [];
+$amountArray = [];
 ?>
 
 <!DOCTYPE html>
@@ -16,8 +17,12 @@ $BloodArray = [];
 <html>
 
 <head>
-    <style>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <style>
+        canvas {
+            height: 20vhpx !important;
+        }
     </style>
 </head>
 
@@ -33,9 +38,12 @@ $BloodArray = [];
         <li class="nav-item"><a class="nav-link" href="donorData.php">Donor</a></li>
         <li class="nav-item"><a class="nav-link" href="staffData.php">Staff</a></li>
     </ul>
-    
-    <div class="main content container border w3-round-large" style="height:80vh;overflow:auto;">
-        <h3>Blood Stock<span class="index"><?php echo $centreName ?></h3>
+
+    <div class="main content container border w3-round-large w3-padding" style="height:80vh;overflow:auto;">
+        <div class='row'>
+            <h3 class="col-11">Blood Stock<span class="index"><i class='fas fa-map-marker-alt' style='color:red;'></i> <?php echo $centreName ?></h3>
+            <button type='button' class='btn btn-primary col mx-2' id='chart' data-bs-toggle='modal' data-bs-target='#chartModal'>Chart</button>
+        </div>
 
         <table id="stock" class="table table-hover sorttable">
             <thead>
@@ -48,7 +56,8 @@ $BloodArray = [];
             <tbody>
                 <?php
                 while ($getBlood = mysqli_fetch_array($getBloodResult)) {
-                    $BloodArray[] = $getBlood['BloodGroup'];
+                    $bloodArray[] = $getBlood['BloodGroup'];
+                    $amountArray[] = $getBlood['sum'];
                     echo "
                     <tr class='table-success'>
                         <td>$getBlood[BloodGroup]</td>
@@ -56,8 +65,10 @@ $BloodArray = [];
                         <td>Available</td>
                     </tr>";
                 }
-                $leftOver = array_diff($bloodGroup, $BloodArray);
-                foreach ($leftOver as $group) {
+                $leftBlood = array_diff($bloodGroup, $bloodArray);
+                foreach ($leftBlood as $group) {
+                    array_push($bloodArray,$group);
+                    array_push($amountArray, '0');
                     echo "
                     <tr class='table-danger'>
                         <td>$group</td>
@@ -65,10 +76,26 @@ $BloodArray = [];
                         <td>Shortage</td>
                     </tr>";
                 }
-
                 ?>
             </tbody>
         </table>
+    </div>
+
+    <!-- chart Modal -->
+    <div class="modal fade" id="chartModal" tabindex="-1" aria-labelledby="chartModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="chartModalLabel">Blood Stock Bar Chart</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <canvas id="myChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -97,6 +124,48 @@ $BloodArray = [];
         function getCellValue(row, index) {
             return $(row).children('td').eq(index).text()
         }
+    </script>
+
+    <!-- chart -->
+    <script>
+        var blood = <?php echo json_encode($bloodArray); ?>;
+        var amount = <?php echo json_encode($amountArray); ?>;
+        // setup 
+        const data = {
+            labels: blood,
+            datasets: [{
+                label: 'Blood Stock at <?php echo $centreName; ?>',
+                data: amount,
+                backgroundColor: [
+                    'lightgreen'
+                ],
+                borderColor: [
+                    'green',
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        // config
+        const config = {
+            type: 'bar',
+            data,
+            options: {
+                responsive: true,
+                indexAxis: 'y',
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        };
+
+        // render init block
+        const myChart = new Chart(
+            document.getElementById('myChart'),
+            config
+        );
     </script>
 </body>
 

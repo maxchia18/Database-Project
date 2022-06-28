@@ -73,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
         .apt {
             padding: 1%;
             padding-bottom: 0;
-            box-shadow: 10px 10px lightpink;
+            box-shadow: 10px 10px lightblue;
             background-color: gold;
         }
     </style>
@@ -112,17 +112,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
 
                 if ($status == "ongoing") {
                     $statusUpdate = "Ongoing";
-                    $statusColor = "rgb(255, 255, 185);";
+                    $statusColor = "rgb(255, 255, 185)";
                     $btnVis = "block";
                 } else if ($status == "completed") {
                     $statusUpdate = "<a href='donationHistory.php' target='_blank'>Completed</a>";
-                    $statusColor = "lightblue";
+                    $statusColor = "lightgreen";
                 } else if ($status == "cancelled") {
                     $statusUpdate = "Cancelled";
-                    $statusColor = "lightsalmon";
+                    $statusColor = "lightpink";
                 } else if ($status == "rejected") {
                     $statusUpdate = "Rejected";
-                    $statusColor = "lightsalmon";
+                    $statusColor = "lightpink";
                 }
                 $getName = "SELECT CentreName FROM DonationCentre WHERE CentreID = $apt[CentreID]";
                 $nameResult = mysqli_query($conn, $getName);

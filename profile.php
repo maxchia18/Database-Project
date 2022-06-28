@@ -90,13 +90,6 @@ $getDonor = mysqli_fetch_assoc($getDonorResult);
         .count:hover {
             cursor: pointer;
         }
-
-        .spanCount {
-            margin-left: 60%;
-            border-radius: 50%;
-            height: auto;
-            padding: 0% 1%;
-        }
     </style>
 </head>
 
@@ -106,24 +99,24 @@ $getDonor = mysqli_fetch_assoc($getDonorResult);
             <h2 class="mb-4">Profile</h2>
         </div>
         <div class='bg' id='bg1'>
-            <a id="link2" class='alink' href="#">My Profile
-                <i class="fa fa-user" style="margin-left:20%;"></i></a>
+            <a id="link2" class='alink' href="#">Profile
+                <i class="fa fa-user" style="margin-left:40%;"></i></a>
             </a>
         </div>
     </div>
 
     <div class="main w3-padding-large">
-        <h1 class="mb-4">Hi there, <?php echo $getDonor['FirstName']; ?>.</h1>
+        <h1 class="mb-4">Profile</h1>
         <div class="container shadow-sm rounded border w3-padding">
             <form id="profile" method="POST">
                 <div class="form-group row mb-3">
                     <div class="form-group col-md-6">
                         <label class="form-label" for="fName">First Name</label>
-                        <input type="text" class="form-control" id="fName" name="fName" onkeydown="return /^[a-zA-Z-'./ ]*$/i.test(event.key)" maxlength="50">
+                        <input type="text" class="form-control" id="fName" name="fName"  maxlength="50">
                     </div>
                     <div class="form-group col-md-6">
                         <label class="form-label" for="lName">Last Name</label>
-                        <input type="text" class="form-control" id="lName" name="lName" onkeydown="return /^[a-zA-Z-'./ ]*$/i.test(event.key)" maxlength="50">
+                        <input type="text" class="form-control" id="lName" name="lName" maxlength="50">
                     </div>
                 </div>
                 <div class="form-group row mt-3">
@@ -148,12 +141,6 @@ $getDonor = mysqli_fetch_assoc($getDonorResult);
                     <label class="form-label" for="email">Email</label>
                     <input type="email" class="form-control" id="email" name="email">
                 </div>
-                <div class="pw" style="display:none;">
-                    <label class="form-label" for="password">Password</label>
-                    <div class="input-group">
-                        <input type="password" class="form-control" id="password" name="password" placeholder="Password" maxlength="50" />
-                    </div>
-                </div>
             </form>
         </div>
 
@@ -166,8 +153,9 @@ $getDonor = mysqli_fetch_assoc($getDonorResult);
         <h1 class="mb-2">You have made</h1>
         <div class="row w3-padding">
             <div class="container rounded border col count p-2" id="aptCount" onclick="window.location.href='appointment.php';">
-                <h3>Appointment<span class="spanCount"><?php echo $getCount["aptCount"]; ?></span></h3>
+                <h3>Appointment<span class="float-end"><?php echo $getCount["aptCount"]; ?></span></h3>
             </div>
+            <div class="col-1"></div>
         <?php
         $getCount = "SELECT COUNT(BloodDonation.DonationID) as 'donCount'
             FROM Appointment INNER JOIN BloodDonation 
@@ -176,7 +164,7 @@ $getDonor = mysqli_fetch_assoc($getDonorResult);
         $getCount = mysqli_fetch_assoc($getCountResult);
         ?>
             <div class="container rounded border col count p-2" id="donationCount" onclick="window.location.href='donationHistory.php';">
-                <h3>Donation<span class="spanCount" style="margin-left:70%;"><?php echo $getCount["donCount"]; ?></span></h3>
+                <h3>Donation<span class="float-end"><?php echo $getCount["donCount"]; ?></span></h3>
             </div>
         </div>
     </div>

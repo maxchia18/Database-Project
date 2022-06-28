@@ -38,8 +38,8 @@ $getDonor = "SELECT User.*, Donor.*,Blood.BloodGroup FROM User
         <form method='POST' action="donorHistory.php" class="form-inline row">
             <h3 class="col-8">Donors<span class="index"># ➜ Donor ID</h3>
             <div class="form-group ml-4 mb-2 col-3">
-                <select class="form-select form-control float-end" name='donorID'>
-                    <option disabled hidden selected>Select Donor ID</option>
+                <select class="form-select form-control float-end" name='donorID' required="required">
+                    <option value="" disabled hidden selected>Select Donor ID</option>
                     <?php
                         $getDonorID = mysqli_query($conn,$getDonor);
                         while($id = mysqli_fetch_assoc($getDonorID)){

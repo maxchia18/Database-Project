@@ -9,11 +9,6 @@ $getYear = "SELECT DISTINCT YEAR(Appointment.AppointedDate) as 'year' FROM Appoi
             INNER JOIN BloodDonation ON Appointment.AppointmentID = BloodDonation.AppointmentID
             WHERE CentreID = $centreID";
 $getYearResult = mysqli_query($conn, $getYear);
-
-$getMonth = "SELECT DISTINCT MONTH(AppointedDate) as 'month' FROM Appointment
-            INNER JOIN BloodDonation ON Appointment.AppointmentID = BloodDonation.AppointmentID
-            WHERE CentreID = $centreID";
-$getMonthResult = mysqli_query($conn, $getMonth);
 ?>
 
 <!DOCTYPE html>
@@ -28,7 +23,7 @@ $getMonthResult = mysqli_query($conn, $getMonth);
 
     <ul class="nav nav-tabs nav-justified mb-3">
         <li class="nav-item"><a class="nav-link" href='staffApt.php'>Appointment<span class="count"><?php echo $aptCount; ?></span></a></li>
-        <li class="nav-item"><a class="nav-link active"  aria-current="page" href="staffDonHistory.php">Donation Records</a></li>
+        <li class="nav-item"><a class="nav-link active" aria-current="page" href="staffDonHistory.php">Donation Records</a></li>
         <li class="nav-item"><a class="nav-link" href="staffBloodStock.php">Blood Stock</a></li>
         <li class="nav-item"><a class="nav-link" href="donorData.php">Donor</a></li>
         <li class="nav-item"><a class="nav-link" href="staffData.php">Staff</a></li>
@@ -48,8 +43,8 @@ $getMonthResult = mysqli_query($conn, $getMonth);
             <div class="col form-group">
                 <select class="form-select p-1 yearMonth" id="viewMonth" name="viewMonth" required>
                     <option value="all">- Select Month -</option>
-                    <?php while ($getMonth = mysqli_fetch_assoc($getMonthResult)) {
-                        echo "<option value='$getMonth[month]'>$getMonth[month]</option>";
+                    <?php for ($i = 1; $i <= 12; $i++) {
+                        echo "<option value='$i'>$i</option>";
                     } ?>
                 </select>
             </div>
@@ -129,12 +124,27 @@ $getMonthResult = mysqli_query($conn, $getMonth);
                         } else {
                             $(this).hide();
                         }
+                    } else if (rowYear != '' || rowMonth != '') {
+                        if (year != 'all') {
+                            if (rowYear == year) {
+                                $(this).show();
+                            } else {
+                                $(this).hide();
+                            }
+                        }
+                        if (month != 'all') {
+                            if (rowMonth == month) {
+                                $(this).show();
+                            } else {
+                                $(this).hide();
+                            }
+                        }
                     }
                 });
             }
         }
     </script>
-     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <!-- sorttable -->
     <script>
         $('th').click(function() {

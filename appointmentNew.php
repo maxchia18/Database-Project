@@ -9,10 +9,9 @@ $mobile = "SELECT DonationCentre.*, MobileCentre.* FROM DonationCentre
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['appoint'])) {
-        $centre = explode(",", $_POST['centre']);
         $date = $_POST['date'];
         $session = $_POST['session'] . ":00:00";
-
+        $centre = explode(",", $_POST['centre']);
         $centreID = $centre[0];
         $insertApt = "INSERT INTO Appointment(DonorID, AppointedDate, AppointedSession, CentreID)
                   VALUES ('$userID','$date','$session','$centreID')";
@@ -34,7 +33,6 @@ $checkApt = "SELECT * FROM Appointment WHERE DonorID = $userID ORDER BY Appointm
 $checkResult = mysqli_query($conn, $checkApt);
 $row = mysqli_num_rows($checkResult);
 $AppointmentStatus = mysqli_fetch_assoc($checkResult);
-$status = $AppointmentStatus['AppointmentStatus'];
 $msgVis = "none";
 $message = "";
 
@@ -43,6 +41,7 @@ if ($row == 0) {
     $noApt = "block";
     $minDate = date("Y-m-d");
 } else {
+    $status = $AppointmentStatus['AppointmentStatus'];
     if ($status == "ongoing") {
         $hasApt = "block";
         $noApt = "none";
@@ -218,7 +217,7 @@ if ($row == 0) {
                 </div>
                 <div class="form-group mb-3">
                     <label class="form-label" for="centre">Donation Centre</label>
-                    <select class="form-select w3-padding" name="centre" id="centre" onchange="setMaxDate(this.value);" disabled required>
+                    <select class="form-select w3-padding" name="centre" id="centre" disabled required>
                         <option value="" disabled selected hidden>- Select Donation Centre -</option>
                         <optgroup label="Blood Bank">
                             <?php
@@ -335,32 +334,16 @@ if ($row == 0) {
                 var mobileCentre = document.getElementById("mobile" + i);
                 let splitDate = mobileCentre.value.split(',');
                 startDate[i] = splitDate[1];
+                endDate[i] = splitDate[2];
 
                 let tempStartDate = new Date(startDate[i]);
-                if (parsedDate > tempStartDate) {
+                let tempEndDate = new Date(endDate[i]);
+                if (parsedDate < tempStartDate || parsedDate > tempEndDate) {
                     mobileCentre.disabled = true;
+                    mobileCentre.selected = false;
                 } else {
                     mobileCentre.disabled = false;
                 }
-            }
-        }
-
-        function setMaxDate(centreValue) {
-            const date = document.getElementById("date");
-            let text = centreValue.split(",");
-
-            centreID = text[0];
-            startDate = text[1];
-            endDate = text[2];
-            date.disabled = false;
-            date.value = startDate;
-            date.min = startDate;
-            date.max = endDate;
-
-            //bloodbank
-            if (startDate == undefined) {
-                date.min = "<?php echo $minDate ?>";
-                date.value = "<?php echo $minDate ?>";
             }
         }
     </script>

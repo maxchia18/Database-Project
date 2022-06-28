@@ -38,16 +38,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             echo "Error: " . $sql . "<br>" . $conn->error;
                         }
                     }
-                } else {
-                    echo '<script type ="text/JavaScript">';
-                    echo 'alert("Email exists.")';
-                    echo '</script>';
-                }
-            }
+        } else {
+            echo '<script type ="text/JavaScript">';
+            echo 'alert("Email already exists.")';
+            echo '</script>';
         }
+    }
+}
 
 if (isset($_SESSION['UserID'])) {
-redirectHome($userType);
+    redirectHome($userType);
 }
 ?>
 
@@ -102,7 +102,7 @@ redirectHome($userType);
                 <div class="col">
                     <div class="form-group mb-3">
                         <label class="form-label" for="age">Age</label>
-                        <input type="number" min="0" class="form-control" id="age" name="age" placeholder="Age" onkeyup="checkAge();" required />
+                        <input type="number" min="0" class="form-control" id="age" name="age" placeholder="Age" onkeyup="checkAge();" onkeypress='return event.charCode >= 48 && event.charCode <= 57' required />
                     </div>
                 </div>
                 <div class="col">
@@ -183,7 +183,7 @@ redirectHome($userType);
             <div class="form-check mb-3 mx-3">
                 <input type="checkbox" class="form-check-input" id="checkTAC" name="checkTAC" value="checked" required>
                 <label class="form-check-label" for="checkTAC">By checking this, you acknowledge all of the information are correct, that you are physically and mentally suitable to donate blood, and agreed to our
-                    <a href="https://www.youtube.com/watch?v=iik25wqIuFo" target="_blank">Terms and Condition</a>.</label>
+                    <a href="https://www.youtube.com/watch?v=iik25wqIuFo" target="_blank" style="color:blue;">Terms and Condition</a>.</label>
             </div>
             <div class="form-group mb-3">
                 <div class="row">
@@ -275,9 +275,6 @@ redirectHome($userType);
                 var start = textBox.selectionStart;
                 var end = textBox.selectionEnd;
                 textBox.value = textBox.value.charAt(0).toUpperCase() + textBox.value.slice(1);
-                // textBox.value = textBox.value.toLowerCase().replace(/\b[a-z]/g, function(letter) {
-                //     return letter.toUpperCase();
-                // });
                 textBox.setSelectionRange(start, end);
                 return textBox.value;
             });

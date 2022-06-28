@@ -10,21 +10,6 @@ if ($userType == 'staff') {
     ob_end_flush();
     exit();
 }
-
-//redirect user away from login and register if logged in
-function redirectHome($userType)
-{
-    if ($userType == 'staff') {
-        header('Location: staff/staffApt.php');
-        ob_end_flush();
-        exit();
-    }
-    if ($userType == "donor") {
-        header('Location: index.php');
-        ob_end_flush();
-        exit();
-    }
-}
 ?>
 
 <!DOCTYPE html>

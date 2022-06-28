@@ -1,7 +1,7 @@
 <?php
 include "staffHeader.php";
 $getStaff = "SELECT User.*, Staff.CentreID FROM User
-             INNER JOIN Staff ON User.UserID = Staff.UserID";
+             INNER JOIN Staff ON User.UserID = Staff.UserID ORDER BY Staff.UserID";
 $result = mysqli_query($conn, $getStaff);
 
 
@@ -52,12 +52,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                 if (isset($_POST['removeBtn'])) {
                     $staffID = $_POST['staffID'];
-
-                    $delSQL = "DELETE FROM User WHERE UserID = $staffID";
-                    if (mysqli_query($conn, $delSQL)) {
-                        echo "<script>alert('Staff #'+$staffID+' deleted.')</script>";
+                    $getAllStaff = "SELECT * FROM Staff";
+                    $staffResult = mysqli_query($conn, $getAllStaff);
+                    $staffArray = [];
+                    while ($staff = mysqli_fetch_assoc($staffResult)) {
+                        array_push($staffArray, $staff['UserID']);
+                    }
+                    if (in_array($staffID, $staffArray) == 0) {
+                        echo "<script>
+                        alert('Staff ID does not exist.'); 
+                        window.location.href = 'staffData.php';
+                        </script>";
                     } else {
-                        mysqli_error($conn);
+                        $delSQL = "DELETE FROM User WHERE UserID = $staffID";
+                        if (mysqli_query($conn, $delSQL)) {
+                            echo "<script>alert('Staff #'+$staffID+' deleted.')</script>";
+                            header("Location: ../logout.php");
+                        } else {
+                            mysqli_error($conn);
+                        }
                     }
                 }
             }
@@ -90,12 +103,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <li class="nav-item"><a class="nav-link active" aria-current="page" href="staffData.php">Staff</a></li>
     </ul>
 
-    <div class="content container border w3-round-large w3-padding" style="height:80vh;overflow:auto;">
-        <div class="row">
-            <h3 class="col-11">Staffs<span class="index"># ➜ Staff ID</h3>
-            <div class="col form-group">
-                <button type="button" class='addStaff btn btn-success w3-round p-1 px-2' id="addBtn" name='addStaff' data-bs-toggle='modal' data-bs-target='#addStaff'><i class="fa fa-plus"></i></button>
-                <button type="button" class='addStaff btn btn-danger w3-round p-1 px-2' id="delBtn" name='delStaff' data-bs-toggle='modal' data-bs-target='#delStaff'><i class="fa fa-minus"></i></button>
+    <div class="content container border w3-round-large w3-padding " style="height:80vh;overflow:auto;">
+        <div class="row justify-content-around">
+            <h3 class="col-10">Staffs<span class="index"># ➜ Staff ID</h3>
+            <div class="form-group mb-2 col">
+                <button type="button" class='btn btn-success w3-round p-1 px-2 col float-end' id="addBtn" name='addStaff' data-bs-toggle='modal' data-bs-target='#addStaff'><i class="fa fa-plus"></i></button>
+            </div>
+            <div class="form-group mb-2 col">
+                <button type="button" class='btn btn-warning w3-round p-1 mx-2 float-end' id="editBtn" name='editStaff' data-bs-toggle='modal' data-bs-target='#editStaff'>Edit</button>
+            </div>
+            <div class="form-group mb-2 col">
+                <button type="button" class='btn btn-danger w3-round p-1 px-2 float-end' id="delBtn" name='delStaff' data-bs-toggle='modal' data-bs-target='#delStaff'><i class="fa fa-minus"></i></button>
             </div>
         </div>
         <table class="table table-hover table-striped">
@@ -107,6 +125,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <th scope="col">Email</th>
                     <th scope="col">Centre</th>
                     <th scope="col">Centre Type</th>
+
                 </tr>
             </thead>
             <tbody>
@@ -174,7 +193,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </div>
                         <div class="form-group mb-3">
                             <label class="form-label" for="email">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" maxlength="50" required />
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Email Address" maxlength="50" required autocomplete="off" />
                         </div>
                         <div class="form-group mb-3">
                             <label class="form-label" for="password">Password</label>
@@ -237,7 +256,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </div>
                     </form>
                 </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- editModal -->
+    <div class="modal fade" id="editStaff" tabindex="-1" aria-labelledby="editStaffLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editStaffLabel">Edit Staff</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editform" action="editStaff.php" method="POST">
+                        <div class="form-group mb-3">
+                            <input type="number" step="1" class="form-control" id="editStaffID" name="editStaffID" placeholder="Enter Staff ID" required />
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" id="confirmEdit" name="confirmEdit" class="btn btn-primary">Confirm</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

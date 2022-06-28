@@ -15,11 +15,6 @@ $getCentreResult = mysqli_query($conn, $getCentre);
 $centreData = mysqli_fetch_assoc($getCentreResult);
 $centreName = $centreData['CentreName'];
 $staffName = explode(" ", $userName);
-
-
-if ($userType == "donor") {
-    header("Location: ../index.php");
-}
 ?>
 
 <!DOCTYPE html>
