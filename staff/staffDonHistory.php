@@ -16,17 +16,18 @@ $getYearResult = mysqli_query($conn, $getYear);
 <html>
 
 <body>
-    <?php
+  <?php //get appointment count
     $getAppointment = "SELECT * FROM Appointment WHERE CentreID = $centreID AND AppointmentStatus = 'ongoing' ORDER BY AppointedDate,AppointedSession";
     $getAptResult = mysqli_query($conn, $getAppointment);
     $aptCount = mysqli_num_rows($getAptResult); ?>
 
     <ul class="nav nav-tabs nav-justified mb-3">
         <li class="nav-item"><a class="nav-link" href='staffApt.php'>Appointment<span class="count"><?php echo $aptCount; ?></span></a></li>
-        <li class="nav-item"><a class="nav-link active" aria-current="page" href="staffDonHistory.php">Donation Records</a></li>
+        <li class="nav-item"><a class="nav-link active" aria-current="page" href="staffDonHistory.php">Donation</a></li>
         <li class="nav-item"><a class="nav-link" href="staffBloodStock.php">Blood Stock</a></li>
-        <li class="nav-item"><a class="nav-link" href="donorData.php">Donor</a></li>
+        <li class="nav-item"><a class="nav-link" href="staffDonorData.php">Donor</a></li>
         <li class="nav-item"><a class="nav-link" href="staffData.php">Staff</a></li>
+        <li class="nav-item"><a class="nav-link" href="staffCentre.php">Centre</a></li>
     </ul>
 
     <div class="content container border w3-round-large pt-2" style="height:80vh;overflow:auto;">
@@ -61,6 +62,7 @@ $getYearResult = mysqli_query($conn, $getYear);
                     <th scope="col">Blood Group</th>
                     <th scope="col">Type</th>
                     <th scope="col">Amount (ml)</th>
+                    <th scope="col" title="Conducted by">Staff ID</th>
                 </tr>
             </thead>
             <tbody>
@@ -76,6 +78,8 @@ $getYearResult = mysqli_query($conn, $getYear);
                     ($getDonation['DonationType'] == 'w') ? $donationType = "Whole Blood" :
                         $donationType = "Aphresis";
 
+                    $getStaff="SELECT FirstName,LastName FROM User WHERE UserID = $getDonation[StaffID]";
+                    $staffName = mysqli_fetch_assoc(mysqli_query($conn,$getStaff));
                     echo "<tr>
                     <td scope='row'><b>$getDonation[DonationID]</b></td>
                     <td>$donorData[FirstName] $donorData[LastName]</td>
@@ -85,6 +89,7 @@ $getYearResult = mysqli_query($conn, $getYear);
                     <td>$donorData[BloodGroup]</td>
                     <td>$donationType</td>
                     <td>$getDonation[DonationAmount]</td>
+                    <td title='$staffName[FirstName] $staffName[LastName]'>$getDonation[StaffID]</td>
                 </tr>";
                 } ?>
             </tbody>

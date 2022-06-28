@@ -5,12 +5,12 @@ $sql = "SELECT * FROM Appointment WHERE DonorID = '$userID' ORDER BY Appointment
 $result = mysqli_query($conn, $sql);
 $count = mysqli_num_rows($result);
 
-if ($_SERVER["REQUEST_METHOD"] == "POST"){
-    if(isset($_POST['cancelBtn'])){
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['cancelBtn'])) {
         $aptID = $_POST['aptID'];
 
         $updateCancel = "UPDATE Appointment SET AppointmentStatus = 'cancelled' WHERE AppointmentID = $aptID";
-        if($cancelResult = mysqli_query($conn,$updateCancel)){
+        if ($cancelResult = mysqli_query($conn, $updateCancel)) {
             echo "<script>alert('Cancelled successfully!');</script>";
             echo "<meta http-equiv='refresh' content='0'>";
         }
@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             left: 0;
             overflow-x: hidden;
             padding-top: 20px;
-            background-color: #ff7169;
+            background-color: lightsalmon;
         }
 
         .main {
@@ -55,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             vertical-align: middle;
         }
 
-        #link1:hover {
+        .link2:hover {
             color: white;
             transition: 0.5s;
         }
@@ -76,6 +76,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             box-shadow: 10px 10px lightblue;
             background-color: gold;
         }
+
+        .link-icon {
+            margin-right: 5%;
+        }
     </style>
 
 </head>
@@ -86,17 +90,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
             <h2 class="mb-4">Appointment</h2>
         </div>
         <div class='bg' id='bg1'>
-            <a id="link2" class='alink' href="#">Check Appointment
-                <i class="fa fa-check-circle" style="margin-left:14.3%;"></i></a>
+            <a class="alink" href="appointment.php"><i class="fa fa-check-circle link-icon"></i>Appointment</a>
+        </div>
+        <div class='bg'>
+            <a class="link2 alink" href="donationHistory.php"><i class="fa fa-history link-icon"></i>Donation History</a>
+        </div>
+        <div class='bg'>
+            <a class="link2 alink" href="profile.php">
+                <i class="fa fa-user link-icon"></i>Profile
             </a>
         </div>
-        <div class='bg' id='bg2'>
-            <a id="link1" class='alink' href="appointmentNew.php"> New Appointment
-                <i class="fa fa-plus-circle" style="margin-left:19.3%;"></i></a>
-        </div>
     </div>
+
     <div class="main w3-padding-large">
-        <h1 class="mb-4">Appointment</h1>
+        <div class="row">
+            <h1 class=" col-8">Appointment</h1>
+            <div class="col">
+                <button type="button" class="btn btn-primary my-2 float-end" onclick="window.location.href='appointmentNew.php'"><i class="fa fa-plus-circle"></i> Appointment</button>
+            </div>
+        </div>
         <?php
         if ($count == 0) {
             echo "
@@ -147,10 +159,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST"){
                             </div>
                         </div>
                 </div>";
-                $i++;
-            }
-        } ?>
-</div>
+                                                                                                $i++;
+                                                                                            }
+                                                                                        } ?>
+    </div>
     </div>
 </body>
 

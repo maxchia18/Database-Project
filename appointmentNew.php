@@ -118,7 +118,7 @@ if ($row == 0) {
             background-color: #111;
             overflow-x: hidden;
             padding-top: 20px;
-            background-color: #ff7169;
+            background-color: lightsalmon;
         }
 
         .main {
@@ -143,7 +143,7 @@ if ($row == 0) {
             vertical-align: middle;
         }
 
-        #link2:hover {
+        .link2:hover {
             color: white;
             transition: 0.5s;
         }
@@ -161,6 +161,10 @@ if ($row == 0) {
         input[type='text'] {
             background-color: rgb(240, 240, 240);
         }
+
+        .link-icon {
+            margin-right: 5%;
+        }
     </style>
 </head>
 
@@ -169,20 +173,28 @@ if ($row == 0) {
         <div class="w3-center"><i class="fas fa-syringe w3-xxxlarge"></i>
             <h2 class="mb-4">Appointment</h2>
         </div>
+        <div class='bg' id="bg2">
+            <a class="alink" href="appointment.php"><i class="fa fa-check-circle link-icon"></i>Appointment</a>
+        </div>
         <div class='bg' id="bg1">
-            <a id="link2" class='alink' href="appointment.php">Check Appointment
-                <i class="fa fa-check-circle" style="margin-left:14.3%;"></i></a>
+            <a class="link2 alink" href="donationHistory.php"><i class="fa fa-history link-icon"></i>Donation History</a>
+        </div>
+        <div class='bg' id="bg1">
+            <a class="link2 alink" href="profile.php">
+                <i class="fa fa-user link-icon"></i>Profile
             </a>
         </div>
-        <div class='bg' id="bg2">
-            <a id="link1" class='alink' href="#"> New Appointment
-                <i class="fa fa-plus-circle" style="margin-left:19.3%;"></i></a>
-        </div>
     </div>
+
     <div class="main w3-padding-large">
         <form id="aptForm" method="POST">
-            <h1 class="mb-4">New Appointment</h1>
-            <div class="container shadow-sm rounded border w3-padding" id='form'>
+            <div class="row">
+                <h1 class=" col-8">New Appointment</h1>
+                <div class="col">
+                <button type="button" class="btn btn-primary my-2 float-end" onclick="window.location.href='appointment.php'"><i class="fa fa-history"></i> Appointment</button>
+                </div>
+            </div>
+            <div class="container shadow-sm rounded border w3-padding my-3" id='form'>
                 <h3 class='w3-center' id='hasApt'>We appreciate your kindness, but you have an ongoing
                     <a href='appointment.php' style="color:blue;">appointment</a> to attend.
                 </h3>

@@ -46,8 +46,7 @@ $getDonor = mysqli_fetch_assoc($getDonorResult);
             vertical-align: middle;
         }
 
-        #link1:hover {
-            color: white;
+        .link2:hover {
             transition: 0.5s;
         }
 
@@ -90,6 +89,10 @@ $getDonor = mysqli_fetch_assoc($getDonorResult);
         .count:hover {
             cursor: pointer;
         }
+
+        .link-icon {
+            margin-right: 5%;
+        }
     </style>
 </head>
 
@@ -98,9 +101,15 @@ $getDonor = mysqli_fetch_assoc($getDonorResult);
         <div class="w3-center"><i class="fa fa-user w3-xxxlarge"></i>
             <h2 class="mb-4">Profile</h2>
         </div>
+        <div class='bg'>
+            <a class="alink" href="appointment.php"><i class="fa fa-check-circle link-icon"></i>Appointment</a>
+        </div>
+        <div class='bg'>
+            <a class="alink" href="donationHistory.php"><i class="fa fa-history link-icon"></i>Donation History</a>
+        </div>
         <div class='bg' id='bg1'>
-            <a id="link2" class='alink' href="#">Profile
-                <i class="fa fa-user" style="margin-left:40%;"></i></a>
+            <a class="alink" href="profile.php">
+                <i class="fa fa-user link-icon"></i>Profile
             </a>
         </div>
     </div>
@@ -112,7 +121,7 @@ $getDonor = mysqli_fetch_assoc($getDonorResult);
                 <div class="form-group row mb-3">
                     <div class="form-group col-md-6">
                         <label class="form-label" for="fName">First Name</label>
-                        <input type="text" class="form-control" id="fName" name="fName"  maxlength="50">
+                        <input type="text" class="form-control" id="fName" name="fName" maxlength="50">
                     </div>
                     <div class="form-group col-md-6">
                         <label class="form-label" for="lName">Last Name</label>
@@ -151,20 +160,20 @@ $getDonor = mysqli_fetch_assoc($getDonorResult);
         $getCount = mysqli_fetch_assoc($getCountResult);
         ?>
         <h1 class="mb-2">You have made</h1>
-        <div class="row w3-padding">
+        <div class="row px-2">
             <div class="container rounded border col count p-2" id="aptCount" onclick="window.location.href='appointment.php';">
                 <h3>Appointment<span class="float-end"><?php echo $getCount["aptCount"]; ?></span></h3>
             </div>
             <div class="col-1"></div>
-        <?php
-        $getCount = "SELECT COUNT(BloodDonation.DonationID) as 'donCount'
+            <?php
+            $getCount = "SELECT COUNT(BloodDonation.DonationID) as 'donCount'
             FROM Appointment INNER JOIN BloodDonation 
             ON Appointment.AppointmentID = BloodDonation.AppointmentID WHERE Appointment.DonorID = $userID";
-        $getCountResult = mysqli_query($conn, $getCount);
-        $getCount = mysqli_fetch_assoc($getCountResult);
-        ?>
+            $getCountResult = mysqli_query($conn, $getCount);
+            $getCount = mysqli_fetch_assoc($getCountResult);
+            ?>
             <div class="container rounded border col count p-2" id="donationCount" onclick="window.location.href='donationHistory.php';">
-                <h3>Donation<span class="float-end"><?php echo $getCount["donCount"]; ?></span></h3>
+                <h3><?php echo $getCount["donCount"]; ?><span class="float-end">Donation</span></h3>
             </div>
         </div>
     </div>

@@ -33,16 +33,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $userID = mysqli_insert_id($conn);
                 $sql2 = "INSERT INTO Staff(UserID, CentreID)
                         VALUE('$userID','$centre')";
-
                 if (mysqli_query($conn, $sql2)) { ?>
                     <script type="text/JavaScript">
                         alert("New staff added successful.");
                     </script><?php
-                                echo "<meta http-equiv='refresh' content='0'>";
-                            } else {
-                                echo "Error: " . $sql . "<br>" . $conn->error;
-                            }
-                        }
+                    echo "<meta http-equiv='refresh' content='0'>";
+                } else {
+                    echo "Error: " . $sql . "<br>" . $conn->error;
+                }
+            }
         } else {
             echo '<script type ="text/JavaScript">';
             echo 'alert("Email exists.")';
@@ -61,29 +60,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         if (in_array($staffID, $staffArray) == 0) {
             echo "<script>
-            alert('Staff ID does not exist.'); 
-            window.location.href = 'staffData.php';
-            </script>";
+                alert('Staff ID does not exist.'); 
+                window.location.href = 'staffData.php';
+                </script>";
         } else {
-            $delSQL = "DELETE FROM User WHERE UserID = $staffID";
-            if (mysqli_query($conn, $delSQL)) {
+            $staffDonation = [];
+            $getStaffID = "SELECT StaffID FROM BloodDonation WHERE StaffID = $staffID";
+            $getStaffResult = mysqli_query($conn, $getStaffID);
+            while ($sd = mysqli_fetch_assoc($getStaffResult)) {
+                array_push($staffDonation, $sd['StaffID']);
+            }
+            //if staff has conducted blood donation before
+            if (in_array($staffID, $staffDonation) == 1) {
                 echo "<script>
-                alert('Staff #'+$staffID+' deleted.');
-                </script>";
-                if($staffID == $userID){
-                    echo "<script>                  
-                    window.location.href = '../logout.php';
-                    </script>";
-                }
-                echo "<meta http-equiv='refresh' content='0'>";
+                        alert('Staff #$staffID cannot be removed.'); 
+                        window.location.href = 'staffData.php';
+                        </script>";
             } else {
-                echo "<script>                  
-                alert('Deleting of this staff is not allowed.');
-                </script>";
+                $delSQL = "DELETE FROM User WHERE UserID = $staffID";
+                if (mysqli_query($conn, $delSQL)) {
+                    echo "<script>
+                            alert('Staff #'+$staffID+' deleted.');
+                            </script>";
+                    if ($staffID == $userID) {
+                        echo "<script>                  
+                            window.location.href = '../logout.php';
+                            </script>";
+                    }
+                    echo "<meta http-equiv='refresh' content='0'>";
+                } else {
+                    echo "<script>                  
+                            alert('Deleting of this staff is not allowed.');
+                            </script>";
+                }
             }
         }
     }
 }
+        
 ?>
 
 <!DOCTYPE html>
@@ -101,16 +115,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body>
-    <?php
+  <?php //get appointment count
     $getAppointment = "SELECT * FROM Appointment WHERE CentreID = $centreID AND AppointmentStatus = 'ongoing' ORDER BY AppointedDate,AppointedSession";
     $getAptResult = mysqli_query($conn, $getAppointment);
     $aptCount = mysqli_num_rows($getAptResult); ?>
     <ul class="nav nav-tabs nav-justified mb-3">
         <li class="nav-item"><a class="nav-link" href='staffApt.php'>Appointment<span class="count"><?php echo $aptCount; ?></span></a></li>
-        <li class="nav-item"><a class="nav-link" href="staffDonHistory.php">Donation Records</a></li>
+        <li class="nav-item"><a class="nav-link" href="staffDonHistory.php">Donation</a></li>
         <li class="nav-item"><a class="nav-link" href="staffBloodStock.php">Blood Stock</a></li>
-        <li class="nav-item"><a class="nav-link" href="donorData.php">Donor</a></li>
+        <li class="nav-item"><a class="nav-link" href="staffDonorData.php">Donor</a></li>
         <li class="nav-item"><a class="nav-link active" aria-current="page" href="staffData.php">Staff</a></li>
+        <li class="nav-item"><a class="nav-link" href="staffCentre.php">Centre</a></li>
     </ul>
 
     <div class="content container border w3-round-large w3-padding " style="height:80vh;overflow:auto;">
@@ -120,7 +135,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <button type="button" class='btn btn-success w3-round p-1 px-2 col float-end' id="addBtn" name='addStaff' data-bs-toggle='modal' data-bs-target='#addStaff'><i class="fa fa-plus"></i></button>
             </div>
             <div class="form-group mb-2 col">
-                <button type="button" class='btn btn-warning w3-round p-1 mx-2 float-end' id="editBtn" name='editStaff' data-bs-toggle='modal' data-bs-target='#editStaff'>Edit</button>
+                <button type="button" class='btn btn-warning w3-round p-1 mx-2 float-end' id="editBtn" name='editStaff' data-bs-toggle='modal' data-bs-target='#editStaff'><b>Edit</b></button>
             </div>
             <div class="form-group mb-2 col">
                 <button type="button" class='btn btn-danger w3-round p-1 px-2 float-end' id="delBtn" name='delStaff' data-bs-toggle='modal' data-bs-target='#delStaff'><i class="fa fa-minus"></i></button>
@@ -135,7 +150,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <th scope="col">Email</th>
                     <th scope="col">Centre</th>
                     <th scope="col">Centre Type</th>
-
                 </tr>
             </thead>
             <tbody>

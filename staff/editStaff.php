@@ -64,15 +64,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body>
-    <?php
+  <?php
+//get appointment count
     $getAppointment = "SELECT * FROM Appointment WHERE CentreID = $centreID AND AppointmentStatus = 'ongoing' ORDER BY AppointedDate,AppointedSession";
     $getAptResult = mysqli_query($conn, $getAppointment);
     $aptCount = mysqli_num_rows($getAptResult); ?>
     <ul class="nav nav-tabs nav-justified mb-3">
         <li class="nav-item"><a class="nav-link" href='staffApt.php'>Appointment<span class="count"><?php echo $aptCount; ?></span></a></li>
-        <li class="nav-item"><a class="nav-link" href="staffDonHistory.php">Donation Records</a></li>
+        <li class="nav-item"><a class="nav-link" href="staffDonHistory.php">Donation</a></li>
         <li class="nav-item"><a class="nav-link" href="staffBloodStock.php">Blood Stock</a></li>
-        <li class="nav-item"><a class="nav-link" href="donorData.php">Donor</a></li>
+        <li class="nav-item"><a class="nav-link" href="staffDonorData.php">Donor</a></li>
         <li class="nav-item"><a class="nav-link active" aria-current="page" href="staffData.php">Staff</a></li>
     </ul>
 

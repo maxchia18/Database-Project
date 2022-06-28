@@ -22,16 +22,17 @@ $getDonor = "SELECT User.*, Donor.*,Blood.BloodGroup FROM User
 </head>
 
 <body>
-    <?php
+  <?php //get appointment count
     $getAppointment = "SELECT * FROM Appointment WHERE CentreID = $centreID AND AppointmentStatus = 'ongoing' ORDER BY AppointedDate,AppointedSession";
     $getAptResult = mysqli_query($conn, $getAppointment);
     $aptCount = mysqli_num_rows($getAptResult); ?>
     <ul class="nav nav-tabs nav-justified mb-3">
         <li class="nav-item"><a class="nav-link" href='staffApt.php'>Appointment<span class="count"><?php echo $aptCount; ?></span></a></li>
-        <li class="nav-item"><a class="nav-link" href="staffDonHistory.php">Donation Records</a></li>
+        <li class="nav-item"><a class="nav-link" href="staffDonHistory.php">Donation</a></li>
         <li class="nav-item"><a class="nav-link" href="staffBloodStock.php">Blood Stock</a></li>
-        <li class="nav-item"><a class="nav-link active" aria-current="page" href="donorData.php">Donor</a></li>
+        <li class="nav-item"><a class="nav-link active" aria-current="page" href="staffDonorData.php">Donor</a></li>
         <li class="nav-item"><a class="nav-link" href="staffData.php">Staff</a></li>
+        <li class="nav-item"><a class="nav-link" href="staffCentre.php">Centre</a></li>
     </ul>
 
     <div class="content container border w3-round-large w3-padding" style="height:80vh;overflow:auto;">

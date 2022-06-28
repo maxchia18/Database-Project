@@ -28,7 +28,7 @@ $count = mysqli_num_rows($getHistoryResult);
             left: 0;
             overflow-x: hidden;
             padding-top: 20px;
-            background-color: gold;
+            background-color: rgb(255, 240, 180);
         }
 
         .main {
@@ -46,8 +46,7 @@ $count = mysqli_num_rows($getHistoryResult);
             vertical-align: middle;
         }
 
-        #link1:hover {
-            color: white;
+        .link2:hover {
             transition: 0.5s;
         }
 
@@ -68,12 +67,16 @@ $count = mysqli_num_rows($getHistoryResult);
             background-color: rgb(255, 255, 185);
         }
 
-        #aptLink{
-            text-decoration:none;
+        #aptLink {
+            text-decoration: none;
         }
 
         .detailBtn {
             padding: 4% 10%;
+        }
+
+        .link-icon {
+            margin-right: 5%;
         }
     </style>
 </head>
@@ -83,12 +86,19 @@ $count = mysqli_num_rows($getHistoryResult);
         <div class="w3-center"><i class="fa fa-history w3-xxxlarge"></i>
             <h2 class="mb-4">History</h2>
         </div>
+        <div class='bg'>
+            <a class="alink" href="appointment.php"><i class="fa fa-check-circle link-icon"></i>Appointment</a>
+        </div>
         <div class='bg' id='bg1'>
-            <a id="link2" class='alink' href="#">Donation History
-                <i class="fa fa-history" style="margin-left:14.3%;"></i></a>
+            <a class="alink" href="donationHistory.php"><i class="fa fa-history link-icon"></i>Donation History</a>
+        </div>
+        <div class='bg'>
+            <a class="alink" href="profile.php">
+                <i class="fa fa-user link-icon"></i>Profile
             </a>
         </div>
     </div>
+
     <div class="main w3-padding-large">
         <h1 class="mb-4">Donation History</h1>
         <?php

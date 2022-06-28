@@ -32,15 +32,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body>
-    <?php
+  <?php
+//get appointment count
     $getAppointment = "SELECT * FROM Appointment WHERE CentreID = $centreID AND AppointmentStatus = 'ongoing' ORDER BY AppointedDate,AppointedSession";
     $getAptResult = mysqli_query($conn, $getAppointment);
     $aptCount = mysqli_num_rows($getAptResult); ?>
     <ul class="nav nav-tabs nav-justified mb-3">
         <li class="nav-item"><a class="nav-link" href='staffApt.php'>Appointment<span class="count"><?php echo $aptCount; ?></span></a></li>
-        <li class="nav-item"><a class="nav-link" href="staffDonHistory.php">Donation Records</a></li>
+        <li class="nav-item"><a class="nav-link" href="staffDonHistory.php">Donation</a></li>
         <li class="nav-item"><a class="nav-link" href="staffBloodStock.php">Blood Stock</a></li>
-        <li class="nav-item"><a class="nav-link active" aria-current="page" href="donorData.php">Donor</a></li>
+        <li class="nav-item"><a class="nav-link active" aria-current="page" href="staffDonorData.php">Donor</a></li>
         <li class="nav-item"><a class="nav-link" href="staffData.php">Staff</a></li>
     </ul>
 
@@ -110,7 +111,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="donorHistoryLabel"><?php echo "#" . $donorID . " " . $fName . " " . $lName; ?></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick='window.location.href="donorData.php";'></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick='window.location.href="staffDonorData.php";'></button>
                 </div>
                 <div class="modal-body">
                     <table class="table table-hover table-striped">
@@ -152,7 +153,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     </table>
                     <?php
                     if(mysqli_num_rows($historyResult)==0){
-                        echo "<h3 class='w3-center mt-3'>No donation records, check back later</h3>";
+                        echo "<h3 class='w3-center mt-3'>No Donation, check back later</h3>";
                     }?>
                 </div>
             </div>
