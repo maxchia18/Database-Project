@@ -1,7 +1,7 @@
 <?php
 include "staffHeader.php";
 $getStaff = "SELECT User.*, Staff.CentreID FROM User
-             INNER JOIN Staff ON User.UserID = Staff.UserID";
+             INNER JOIN Staff ON User.UserID = Staff.UserID ORDER BY Staff.UserID";
 $result = mysqli_query($conn, $getStaff);
 
 

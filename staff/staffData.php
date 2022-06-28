@@ -43,38 +43,48 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 echo "Error: " . $sql . "<br>" . $conn->error;
                             }
                         }
-                    } else {
-                        echo '<script type ="text/JavaScript">';
-                        echo 'alert("Email exists.")';
-                        echo '</script>';
-                    }
-                }
+        } else {
+            echo '<script type ="text/JavaScript">';
+            echo 'alert("Email exists.")';
+            echo '</script>';
+            echo "<meta http-equiv='refresh' content='0'>";
+        }
+    }
 
-                if (isset($_POST['removeBtn'])) {
-                    $staffID = $_POST['staffID'];
-                    $getAllStaff = "SELECT * FROM Staff";
-                    $staffResult = mysqli_query($conn, $getAllStaff);
-                    $staffArray = [];
-                    while ($staff = mysqli_fetch_assoc($staffResult)) {
-                        array_push($staffArray, $staff['UserID']);
-                    }
-                    if (in_array($staffID, $staffArray) == 0) {
-                        echo "<script>
-                        alert('Staff ID does not exist.'); 
-                        window.location.href = 'staffData.php';
-                        </script>";
-                    } else {
-                        $delSQL = "DELETE FROM User WHERE UserID = $staffID";
-                        if (mysqli_query($conn, $delSQL)) {
-                            echo "<script>alert('Staff #'+$staffID+' deleted.')</script>";
-                            header("Location: ../logout.php");
-                        } else {
-                            mysqli_error($conn);
-                        }
-                    }
+    if (isset($_POST['removeBtn'])) {
+        $staffID = $_POST['staffID'];
+        $getAllStaff = "SELECT * FROM Staff";
+        $staffResult = mysqli_query($conn, $getAllStaff);
+        $staffArray = [];
+        while ($staff = mysqli_fetch_assoc($staffResult)) {
+            array_push($staffArray, $staff['UserID']);
+        }
+        if (in_array($staffID, $staffArray) == 0) {
+            echo "<script>
+            alert('Staff ID does not exist.'); 
+            window.location.href = 'staffData.php';
+            </script>";
+        } else {
+            $delSQL = "DELETE FROM User WHERE UserID = $staffID";
+            if (mysqli_query($conn, $delSQL)) {
+                echo "<script>
+                alert('Staff #'+$staffID+' deleted.');
+                </script>";
+                if($staffID == $userID){
+                    echo "<script>                  
+                    window.location.href = '../logout.php';
+                    </script>";
                 }
+                echo "<meta http-equiv='refresh' content='0'>";
+            } else {
+                echo "<script>                  
+                alert('Deleting of this staff is not allowed.');
+                </script>";
             }
-                                ?>
+        }
+    }
+}
+?>
 
 <!DOCTYPE html>
 
