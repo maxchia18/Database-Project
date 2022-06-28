@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 26, 2022 at 06:59 PM
+-- Generation Time: Jun 28, 2022 at 09:07 AM
 -- Server version: 10.4.24-MariaDB
 -- PHP Version: 8.1.6
 
@@ -41,8 +41,11 @@ CREATE TABLE `appointment` (
 --
 
 INSERT INTO `appointment` (`AppointmentID`, `DonorID`, `AppointedDate`, `AppointedSession`, `AppointmentStatus`, `CentreID`) VALUES
-(1, 3, '2022-06-26', '08:00:00', 'completed', 1),
-(2, 3, '2022-08-26', '09:00:00', 'cancelled', 1);
+(1, 5, '2022-06-28', '08:00:00', 'completed', 1),
+(2, 9, '2022-06-28', '10:00:00', 'completed', 8),
+(3, 6, '2022-06-28', '12:00:00', 'rejected', 8),
+(4, 5, '2022-08-28', '10:00:00', 'cancelled', 1),
+(5, 7, '2022-07-05', '10:00:00', 'completed', 1);
 
 -- --------------------------------------------------------
 
@@ -62,7 +65,11 @@ CREATE TABLE `blood` (
 --
 
 INSERT INTO `blood` (`BloodID`, `BloodGroup`, `HaemoglobinLevel`, `DonorID`) VALUES
-(1, 'A+', 13, 3);
+(2, 'A+', 15, 5),
+(3, 'B+', 18, 6),
+(4, 'A-', 13, 7),
+(5, 'O+', NULL, 8),
+(6, 'A-', 15, 9);
 
 -- --------------------------------------------------------
 
@@ -106,7 +113,9 @@ CREATE TABLE `blooddonation` (
 --
 
 INSERT INTO `blooddonation` (`DonationID`, `BloodID`, `AppointmentID`, `DonationAmount`, `DonationType`, `StaffID`) VALUES
-(1, 1, 1, 380, 'w', 1);
+(1, 2, 1, 390, 'w', 1),
+(2, 6, 2, 350, 'w', 10),
+(3, 4, 5, 450, 'w', 1);
 
 -- --------------------------------------------------------
 
@@ -124,7 +133,9 @@ CREATE TABLE `bloodstock` (
 --
 
 INSERT INTO `bloodstock` (`DonationID`, `CentreID`) VALUES
-(1, 1);
+(1, 1),
+(2, 8),
+(3, 1);
 
 -- --------------------------------------------------------
 
@@ -172,7 +183,9 @@ CREATE TABLE `donationhistory` (
 --
 
 INSERT INTO `donationhistory` (`DonorID`, `DonationID`) VALUES
-(3, 1);
+(5, 1),
+(7, 3),
+(9, 2);
 
 -- --------------------------------------------------------
 
@@ -194,7 +207,11 @@ CREATE TABLE `donor` (
 --
 
 INSERT INTO `donor` (`UserID`, `Weight`, `Age`, `IsWhole`, `IsAphresis`, `LastDonationDate`) VALUES
-(3, 56, 22, 1, 0, '2022-06-26');
+(5, 56, 22, 1, 0, '2022-06-28'),
+(6, 0, 19, 1, 0, '1900-01-01'),
+(7, 60, 57, 1, 0, '2022-07-05'),
+(8, 60.3, 49, 1, 0, '1900-01-01'),
+(9, 45, 31, 1, 0, '2022-06-28');
 
 -- --------------------------------------------------------
 
@@ -215,10 +232,10 @@ CREATE TABLE `mobilecentre` (
 
 INSERT INTO `mobilecentre` (`CentreID`, `OrganizerName`, `StartDate`, `EndDate`) VALUES
 (4, 'UCSI', '2022-06-19', '2022-06-26'),
-(6, 'AEON Mall Kuching Central', '2022-06-19', '2022-06-26'),
-(7, 'Great Eastern', '2022-06-26', '2022-07-03'),
-(9, 'Great Eastern', '2022-07-03', '2022-07-10'),
-(10, 'UniMAP', '2022-07-10', '2022-07-17');
+(6, 'AEON Mall Kuching Central', '2022-06-26', '2022-07-03'),
+(7, 'Great Eastern', '2022-07-03', '2022-07-10'),
+(9, 'Great Eastern', '2022-07-10', '2022-07-17'),
+(10, 'UniMAP', '2022-07-17', '2022-07-24');
 
 -- --------------------------------------------------------
 
@@ -237,7 +254,10 @@ CREATE TABLE `staff` (
 
 INSERT INTO `staff` (`UserID`, `CentreID`) VALUES
 (1, 1),
-(2, 4);
+(2, 2),
+(10, 8),
+(3, 9),
+(4, 10);
 
 -- --------------------------------------------------------
 
@@ -262,7 +282,14 @@ CREATE TABLE `user` (
 INSERT INTO `user` (`UserID`, `FirstName`, `LastName`, `Gender`, `Email`, `Password`, `UserType`) VALUES
 (1, 'Max', 'Chia', 'Male', '75590@siswa.unimas.my', '$2y$10$by9PuERUFxh5q69MeD0/LOXfGFidmXNQbx8VYszV/XBG6MXXiEpXm', 'staff'),
 (2, 'Jovian', 'Jayome', 'Male', '70019@siswa.unimas.my', '$2y$10$ZP5oZIQpxxUjnvOLepBhvegnphuCvQgV2dpxRRynGYkVD/Ytfv5WS', 'staff'),
-(3, 'Ming', 'Lee', 'Male', 'lee@gmail.com', '$2y$10$i7.b9lWQYHyz0k6fZMMjEug5eD28bH2EHWmqLIdvuP/YIxJVNE0Lu', 'donor');
+(3, 'Nurrul ', 'Nazwa', 'Female', '76391@siswa.unimas.my', '$2y$10$/1TeIOlH.QUjL8jxGASWVOZBCbrW7EgzlyrQhgQ5o0D97SeJaocQ2', 'staff'),
+(4, 'Jaymax', 'Bravyain', 'Male', '75132@siswa.unimas.my', '$2y$10$bpfd.fpnrLZ/IwkyOT8V2u.I1JDIJcy/vFsK10.GbsHy612OwPi5S', 'staff'),
+(5, 'Ming', 'Lee', 'Male', 'lee@gmail.com', '$2y$10$BHExZATonkW0rh6A8tEwF.U0zqNuJVKScFzZxnfdaOGzWITo34wZC', 'donor'),
+(6, 'Muthu a/l', 'Supp', 'Male', 'muthu@gmail.com', '$2y$10$inxydUfWnKcGsanGvD.ZReUcuhEBvfSA0wEB6s/qSavM0ighIb8aa', 'donor'),
+(7, 'Siti binti', 'Abdullah', 'Female', 'siti@gmail.com', '$2y$10$dTq7FNaH10rG25LSMxk.ZuBMt7Jmpb9gcm34E6LPi8VU5qcKgEd4S', 'donor'),
+(8, 'Xin', 'Lee', 'Male', 'xinlee@gmail.com', '$2y$10$SUZFutmMEgnVqPaIzxVuZetqP1soW3R4PiH1jdX9/V.D1lTKhcFr6', 'donor'),
+(9, 'Janice', 'Po', 'Male', 'janice@gmail.com', '$2y$10$erom7BHWHd9iJf59CcHv4.vm.To.05bwvoICMjk6weBQkdI.1jiPG', 'donor'),
+(10, 'Sherry', 'Lam', 'Female', '75355@siswa.unimas.my', '$2y$10$MmcGOhwlRFzLeqIq5HzmzuC2HWcnA3iXYlD7qZGpUVrOTpu8DQd.S', 'staff');
 
 --
 -- Indexes for dumped tables
@@ -351,25 +378,25 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `appointment`
 --
 ALTER TABLE `appointment`
-  MODIFY `AppointmentID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `AppointmentID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `blood`
 --
 ALTER TABLE `blood`
-  MODIFY `BloodID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `BloodID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `blooddonation`
 --
 ALTER TABLE `blooddonation`
-  MODIFY `DonationID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `DonationID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `UserID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `UserID` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Constraints for dumped tables
